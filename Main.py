@@ -1,7 +1,7 @@
 ##Software Engineering Project
 ##Group B
 ##
-##hallo 
+##
 
 class Camera:
 
