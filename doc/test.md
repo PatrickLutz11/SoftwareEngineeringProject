@@ -34,7 +34,7 @@ subgraph DataProcessor[Data Processor]
     P_B[Color Detection]
     P_C[Real-time Visualization]
 
-    P_A --> P_B --> P_C
+    P_A --> P_B --> P_Ces
     end
 
 subgraph Output[Output]
@@ -49,6 +49,7 @@ subgraph Output[Output]
 
 
 %% main links
+%% Extern --> Input --> DataSelector --> DataProcessor --> Output
 E_A -- Images --> I_A --> S_A -- image --> P_A
 E_A -- enabling --> I_B --> S_B -- image --> P_A
 
