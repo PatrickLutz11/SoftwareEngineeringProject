@@ -7,6 +7,7 @@
 - [Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/)
 ### Mermaid
 - [Mermaid Cheat Sheet](https://mermaid.js.org/syntax/flowchart.html)
+- [Mermaid experimental C4](https://mermaid.js.org/syntax/c4.html)
 
 ## Open CV
 - [OpenCV Version 4.2.???]()

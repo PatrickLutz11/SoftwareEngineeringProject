@@ -17,38 +17,28 @@ C4Component
         Rel(Bildverarbeitungsmodul, UI, "Displays detected shapes and colors")
         Rel(Bildverarbeitungsmodul, CSVLogger, "Logs data")
 
+        UpdateRelStyle(UI, MainController, $offsetY="-10", $offsetX="-60")
+        UpdateRelStyle(MainController, ConfigManager, $offsetY="-35", $offsetX="-80")
+        UpdateRelStyle(MainController, InputHandler, $offsetY="0", $offsetX="10")
+        UpdateRelStyle(InputHandler, Bildverarbeitungsmodul, $offsetY="0", $offsetX="-200")
+        UpdateRelStyle(Bildverarbeitungsmodul, UI, $offsetY="110", $offsetX="-240")
+        UpdateRelStyle(Bildverarbeitungsmodul, CSVLogger, $offsetY="-25", $offsetX="-35")
+
     }
 
     Person(User, "User", "Interacts with the system")
 
     System_Ext(Camera, "Camera", "Hardware", "Provides live video stream")
     System_Ext(ImageFolder, "Image Folder", "File System", "Provides images for analysis")
+    ContainerDb_Ext(CSV, "CSV", "File", "Logging Data")
 
     Rel(User, UI, "Interacts via CLI or GUI")
     Rel(Camera, InputHandler, "Provides live video stream")
     Rel(ImageFolder, InputHandler, "Provides images for analysis")
-:::
-:::mermaid
+    Rel(CSVLogger, CSV, "loggs detectet objects")
 
-    flowchart TB
-    subgraph opr ["Object Pattern Recognizer Application"]
-        UI["User Interface (CLI & GUI with Overlay)"]
-        MainController["Main Controller"]
-        ConfigManager["Config Manager"]
-        InputHandler["Input Handler"]
-        Bildverarbeitungsmodul["Image Processing Module"]
-        CSVLogger["CSV Logger"]
-
-        UI -->|User interacts via CLI/GUI| MainController
-        MainController -->|Loads system configurations| ConfigManager
-        MainController -->|Initializes input| InputHandler
-        InputHandler -->|Processes images from camera or folder| Bildverarbeitungsmodul
-        Bildverarbeitungsmodul -->|Displays detected shapes and colors| UI
-        Bildverarbeitungsmodul -->|Logs data| CSVLogger
-    end
-
-    User("User") -->|Interacts via CLI or GUI| UI
-    Camera("Camera") -.->|Provides live video stream| InputHandler
-    ImageFolder("Image Folder") -.->|Provides images for analysis| InputHandler
-
+    UpdateRelStyle(User, UI, $offsetY="-150", $offsetX="-50")
+    UpdateRelStyle(Camera, InputHandler, $offsetY="-150", $offsetX="-70")
+    UpdateRelStyle(ImageFolder, InputHandler, $offsetY="-150", $offsetX="20")
+    UpdateRelStyle(CSVLogger, CSV, $offsetY="-270", $offsetX="-340")
 :::
