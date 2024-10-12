@@ -16,14 +16,6 @@ C4Component
         Rel(InputHandler, Bildverarbeitungsmodul, "Processes images from camera or folder")
         Rel(Bildverarbeitungsmodul, UI, "Displays detected shapes and colors")
         Rel(Bildverarbeitungsmodul, CSVLogger, "Logs data")
-
-        UpdateRelStyle(UI, MainController, $offsetY="-10", $offsetX="-60")
-        UpdateRelStyle(MainController, ConfigManager, $offsetY="-35", $offsetX="-80")
-        UpdateRelStyle(MainController, InputHandler, $offsetY="0", $offsetX="10")
-        UpdateRelStyle(InputHandler, Bildverarbeitungsmodul, $offsetY="0", $offsetX="-200")
-        UpdateRelStyle(Bildverarbeitungsmodul, UI, $offsetY="110", $offsetX="-240")
-        UpdateRelStyle(Bildverarbeitungsmodul, CSVLogger, $offsetY="-25", $offsetX="-35")
-
     }
 
     Person(User, "User", "Interacts with the system")
