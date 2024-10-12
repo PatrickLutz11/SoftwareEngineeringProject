@@ -2,6 +2,7 @@
 ##Group B
 ##
 ##
+import logger
 
 class Camera:
 
