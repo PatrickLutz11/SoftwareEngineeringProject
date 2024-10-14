@@ -3,6 +3,7 @@
 ##
 ##
 import cv2
+import numpy as np
 from abc import ABC, abstractmethod
 
 class Shape(ABC):
@@ -57,6 +58,7 @@ class Hexagram(Shape):
     def __str__(self) -> str:
         return f"Hexagram with height {self.height} and width {self.width}"
 
+
 class detection:
     def shape_detection(img):
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
@@ -77,24 +79,20 @@ class detection:
             if i == 0:
                 i = 1
                 continue
+            
             define_shape = cv2.approxPolyDP(shape, 0.01 * cv2.arcLength(shape, True), True)
+            shape_color = detection.get_color(img, shape)  # Hole die Farbe der Form
             
             M = cv2.moments(shape) 
             if M['m00'] != 0.0: 
-                x = int(M['m10']/M['m00'])
+                x = int(M['m10']/M['m00']) - 100
                 y = int(M['m01']/M['m00']) 
-            
+             
             if len(define_shape) == 3:
                 cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
-                cv2.putText(img, 'Triangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
+                cv2.putText(img, f'Triangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2) 
                 # triangle = Triangle(width = y, height = x)
                 # print(triangle)
-                
-            # elif len(define_shape) == 4:
-            #     cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
-            #     cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
-            #     # rectangle = Rectangle(width = x, height = y)
-            #     # print(rectangle)
                 
             elif len(define_shape) == 4:
                 # Prüfen, ob es ein Quadrat ist
@@ -103,32 +101,57 @@ class detection:
                 
                 if 0.95 <= aspect_ratio <= 1.05:  # Nahezu gleiche Seitenlängen
                     cv2.drawContours(img, [shape], 0, (0, 255, 0), 5)
-                    cv2.putText(img, 'Square', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                    cv2.putText(img, f'Square, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                     # square = Rectangle(width = w, height = h)  # Du könntest hierfür auch eine separate Square-Klasse erstellen
                     # print(square)
                 else:
                     cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
-                    cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                    cv2.putText(img, f'Rectangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                     # rectangle = Rectangle(width = w, height = h)
                     # print(rectangle)
                 
             elif len(define_shape) == 5:
                 cv2.drawContours(img, [shape], 0, (0, 0, 255), 5)
-                cv2.putText(img, 'Pentacle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
+                cv2.putText(img, f'Pentacle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                 # pentacle = Pentacle(width = x, height = y)
                 # print(pentacle)
                 
             elif len(define_shape) == 6:
                 cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
-                cv2.putText(img, 'Hexagram', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
+                cv2.putText(img, f'Hexagram, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                 # hexagram = Hexagram(width=x, height=y)
                 # print(hexagram)   
                 
             else:
                 cv2.drawContours(img, [shape], 0, (0, 0, 255), 5)
-                cv2.putText(img, 'Circle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
+                cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                 # circle = Circle(radius=1)
                 # print(circle)
+                
+                
+    def get_color(img, shape):
+        mask = np.zeros(img.shape[:2], dtype="uint8")
+        cv2.drawContours(mask, [shape], -1, 255, -1)
+        
+        rgb_values = cv2.mean(img, mask=mask)[:3]
+
+        if 80 < rgb_values[0] < 150 and 140 < rgb_values[1] < 190 and 60 < rgb_values[2] < 140:
+            return "Green"
+        
+        elif 60 < rgb_values[0] < 200 and 90 < rgb_values[1] < 140 and 70 < rgb_values[2] < 180:
+            return "Blue"
+        
+        elif rgb_values[0] < 100 and rgb_values[1] < 100 and rgb_values[2] > 150:
+            return "Red"
+        
+        elif rgb_values[0] < 100 and rgb_values[1] > 100 and 150 < rgb_values[2]:
+            return "Orange"
+        
+        elif rgb_values[1] < 100 and rgb_values[0] > 100 and rgb_values[2] > 100:
+            return "Violet"
+        
+        else:
+            return "Unknown Color"
 
 class picture_modifications:
     def resize_the_picture(img):
