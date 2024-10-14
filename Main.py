@@ -90,11 +90,27 @@ class detection:
                 # triangle = Triangle(width = y, height = x)
                 # print(triangle)
                 
+            # elif len(define_shape) == 4:
+            #     cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
+            #     cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
+            #     # rectangle = Rectangle(width = x, height = y)
+            #     # print(rectangle)
+                
             elif len(define_shape) == 4:
-                cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
-                cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2) 
-                # rectangle = Rectangle(width = x, height = y)
-                # print(rectangle)
+                # Prüfen, ob es ein Quadrat ist
+                (x1, y1, w, h) = cv2.boundingRect(define_shape)
+                aspect_ratio = float(w) / h
+                
+                if 0.95 <= aspect_ratio <= 1.05:  # Nahezu gleiche Seitenlängen
+                    cv2.drawContours(img, [shape], 0, (0, 255, 0), 5)
+                    cv2.putText(img, 'Square', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                    # square = Rectangle(width = w, height = h)  # Du könntest hierfür auch eine separate Square-Klasse erstellen
+                    # print(square)
+                else:
+                    cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
+                    cv2.putText(img, 'Rectangle', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+                    # rectangle = Rectangle(width = w, height = h)
+                    # print(rectangle)
                 
             elif len(define_shape) == 5:
                 cv2.drawContours(img, [shape], 0, (0, 0, 255), 5)
