@@ -82,8 +82,9 @@ class CameraOperator:
         return True
     
     
-    def close_camera_stream(self)->None:
+    def close_camera_stream(self)->bool:
         self._capture.release()
+        return True
         
     
     def get_image_camera(self)->cv2.typing.MatLike:
