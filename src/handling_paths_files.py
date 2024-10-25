@@ -31,6 +31,14 @@ class PathHandling():
     
     
     def check_path_validity(self, path:str) -> bool:
+        """checks if path exists
+
+        Args:
+            path (str): system path of directory, path or file
+
+        Returns:
+            bool: True, if exists, otherwise False
+        """
         if (os.path.exists(path)) is False: 
             print(f"ERROR: This path does not exist! \n{path = }\n")
             return False
@@ -38,13 +46,13 @@ class PathHandling():
     
     
     def _check_abs_paths(self) -> bool:
-        if self.path_abs_parent.empty():
+        if not self.path_abs_parent:
             self.path_abs_parent = os.getcwd()
             
-        if self.path_abs_in.empty():
+        if not self.path_abs_in:
             self.path_abs_in = os.path.join(self.path_abs_parent,
                                             self.path_rel_in)
-        if self.path_abs_out.empty():
+        if not self.path_abs_out:
             self.path_abs_out = os.path.join(self.path_abs_parent, 
                                                self.path_rel_out)
         return True
@@ -52,7 +60,7 @@ class PathHandling():
     
     
 class FileHandling():
-    def __init__(self, _path_input:str):
+    def __init__(self, _path_input:str=""):
         self.path_input = _path_input
         self._file_current = ""
         
@@ -72,7 +80,7 @@ class FileHandling():
         for root, dirs, files in os.walk(path):
                 for f in files: 
                     if search_term is None or search_term in str(f): 
-                        filepath = self.editDir(path, str(f))
+                        filepath = os.path.join(path, str(f))
                         item = self.open_one_file(filepath)
                         items.append(item)
                         filepaths.append(filepath)

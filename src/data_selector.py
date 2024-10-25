@@ -17,10 +17,11 @@ class DataSelector:
         elif source_type in self._folder_keywords:
             self.stream = FolderStream()
         else:
+            self.stream = None
             raise ValueError("Invalid source type")
     
     
-    def select_channel(self, source_type:str='f')->bool:
+    def select_stream(self, source_type:str='f')->bool:
         """selects and sets the data stream for the input.
 
         Args:
@@ -31,14 +32,13 @@ class DataSelector:
         Returns:
             bool: True, if successful, False otherwise.
         """
-        print()
         if source_type in self._camera_keywords:
-            print("camera input selected")
+            print(f"\r\ncamera input selected")
             self.stream = CameraStream()
             return True
         
         if source_type in self._folder_keywords:
-            print("folder input selected")
+            print(f"\r\nfolder input selected")
             self.stream = FolderStream()
             return True
         
@@ -46,6 +46,11 @@ class DataSelector:
     
     
     def get_stream(self) -> DataStream:
+        """get selected data stream
+
+        Returns:
+            DataStream: data of slected stream. Otherwise None
+        """
         return self.stream
     
 
@@ -54,18 +59,17 @@ class DataSelector:
 def main():
     selector = DataSelector()
     
-    selector.select_channel('c') # or 'f'
+    selector.select_stream('f') # 'c' or 'f'
     stream = selector.get_stream()
     
-    display_time_img = 1
+    display_time_img = 1000 # in ms
     is_opened = stream.open_data_stream()
     while(is_opened):
-        stream.update_data_stream()
         img = stream.get_current_image()
-        cv2.imwrite("test.png", img)
         cv2.imshow("q: end stream", img)
         if cv2.waitKey(display_time_img) == ord('q'):
             break
+        stream.update_data_stream()
     stream.close_data_stream()
     
 if __name__ == "__main__":
