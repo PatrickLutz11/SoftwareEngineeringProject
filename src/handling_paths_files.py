@@ -16,25 +16,40 @@ class PathHandling():
         
         
     def get_path_abs_parent(self) -> str:
-        self._check_abs_paths()
+        """get parent folder as absolute path
+
+        Returns:
+            str: path of parent folder
+        """
+        self._create_abs_paths()
         return self.path_abs_parent
     
     
     def get_path_abs_input(self) -> str:
-        self._check_abs_paths()
+        """get input folder as absolute path
+
+        Returns:
+            str: path of input folder
+        """
+        self._create_abs_paths()
         return self.path_abs_in
     
     
     def get_path_abs_output(self) -> str:
-        self._check_abs_paths()
+        """get output folder as absolute path
+
+        Returns:
+            str: path of output folder
+        """
+        self._create_abs_paths()
         return self.path_abs_out
     
-    
-    def check_path_validity(self, path:str) -> bool:
+    @staticmethod
+    def check_path_validity(path:str) -> bool:
         """checks if path exists
 
         Args:
-            path (str): system path of directory, path or file
+            path (str): system path of directory, folder or file
 
         Returns:
             bool: True, if exists, otherwise False
@@ -45,7 +60,12 @@ class PathHandling():
         return True
     
     
-    def _check_abs_paths(self) -> bool:
+    def _create_abs_paths(self) -> bool:
+        """creates absolute paths for parent, input and output
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         if not self.path_abs_parent:
             self.path_abs_parent = os.getcwd()
             
@@ -66,12 +86,32 @@ class FileHandling():
         
     
     
-    def open_all_files(self, subfolderCheck: bool=False) -> Tuple[List]:
+    def open_all_files(self) -> Tuple[List]:
+        """opens all files in folder
+
+        Returns:
+            Tuple[List]: Tuple with lists aof images and paths
+                    - Tuple[0] cv2.typing.MatLike:  images
+                    - Tuple[1] str:                 paths of images
+        """
         result = self.open_searched_files() # opens all files
         return result
     
     
     def open_searched_files(self, search_term:str="") -> Tuple[List]:
+        """opens all files which contain search term (file name or type). 
+        If no search term is given, it opens all files. 
+
+        Args:
+            search_term (str, optional): search term for specific files or 
+                                         file types. 
+                                         Defaults to "", opens all files.
+
+        Returns:
+            Tuple[List]: Tuple with lists aof images and paths
+                    - Tuple[0] cv2.typing.MatLike:  images
+                    - Tuple[1] str:                 paths of images
+        """
         subfolderCheck: bool=False
         
         path = self.path_input
@@ -93,7 +133,7 @@ class FileHandling():
     
     def open_one_file(self, path_file:str):
         try:
-            ImageCv = self._open_image_opencv(path_file)
+            ImageCv = ImageConverter().open_image_opencv(path_file)
         except Exception as e:
              print(f"ERROR: Cannot open image: \n{e}")
         return ImageCv
@@ -104,14 +144,51 @@ class FileHandling():
         return
     
     
-    def _open_image_pillow(self, path_image: str) -> Image:
+    
+
+class ImageConverter:
+    """use pillow to open an image (more types are supported) and converts it to openCV image. 
+    """
+    def open_image_opencv(self, path_image: str)->cv2.typing.MatShape:
+        """opens an image in openCV format with pillow
+
+        Args:
+            path_image (str): path to image
+
+        Returns:
+            cv2.typing.MatShape: image in openCV format
+        """
+        return self.convert_image_pillow_to_opencv(self.open_image_pillow(path_image))
+    
+    def open_image_pillow(self, path_image: str) -> Image:
+        """opens an image with pillow
+
+        Args:
+            path_image (str): path to image
+
+        Returns:
+            Image: image in pillow format
+        """
         return PilImg.open(path_image)
     
-    def _open_image_opencv(self, path_image: str):
-        return self._convert_image_pillow_to_opencv(self._open_image_pillow(path_image))
-    
-    def _convert_image_pillow_to_opencv(self, pil_image: Image):
+    def convert_image_pillow_to_opencv(self, pil_image: Image) -> cv2.typing.MatLike:
+        """converts image from pillow into openCV format
+
+        Args:
+            pil_image (Image): image in pillow format
+
+        Returns:
+            cv2.typing.MatLike: image in openCV format
+        """
         return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
     
-    def _convert_image_opencv_to_pillow(self, cv_image) -> Image:
+    def convert_image_opencv_to_pillow(self, cv_image:cv2.typing.MatLike) -> Image:
+        """converts image from openCV into pillow format
+
+        Args:
+            cv_image (cv2.typing.MatLike): image in openCV format
+
+        Returns:
+            Image: image in pillow format
+        """
         return PilImg.fromarray(cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB))
