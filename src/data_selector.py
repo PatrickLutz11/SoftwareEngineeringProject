@@ -12,6 +12,14 @@ class DataSelector:
     _folder_keywords = ["f", "folder"]
     
     def __init__(self, source_type:str="c")->None:
+        """initialize DataSelector
+
+        Args:
+            source_type (str, optional): Name of source. Defaults to "c".
+
+        Raises:
+            ValueError: if no stream is matching
+        """
         if source_type in self._camera_keywords:
             self.stream = CameraStream()
         elif source_type in self._folder_keywords:
@@ -30,7 +38,7 @@ class DataSelector:
                 ["f", "folder"]:        to select folder as data stream
                 
         Returns:
-            bool: True, if successful, False otherwise.
+            bool: True, if successful. False otherwise.
         """
         if source_type in self._camera_keywords:
             print(f"\r\ncamera input selected")
@@ -49,7 +57,7 @@ class DataSelector:
         """get selected data stream
 
         Returns:
-            DataStream: data of slected stream. Otherwise None
+            DataStream: data of slected stream. None, otherwise.
         """
         return self.stream
     

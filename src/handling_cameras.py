@@ -16,8 +16,8 @@ class CameraSearch:
         working_ports = []
         available_ports = []
         
+        print("searching for avaiable camera devices...")
         while is_working:
-            #TODO catch error, so it's not put on console
             camera = cv2.VideoCapture(device_port)
             if not camera.isOpened():
                 is_working = False
@@ -59,17 +59,27 @@ class CameraOperator:
         """
         msg_not_found_port = f"Port could not be found. Port %s remains." %(self.camera_device_port)
         working_device_ports = CameraSearch().list_camera_devices()
-        if 0 not in working_device_ports:
+        if len(working_device_ports) == 0:
+            print("ERROR: No avaiable camera device detected.")
             self._camera_available = False
             return False
         
-        print("\r\nEnter one of the following numbers to select camera port:", 
-              working_device_ports)
+        # if only one device is detected
+        if len(working_device_ports) == 1:
+            self.camera_device_port = working_device_ports[0]
+            print(f"\r\nPort {self.camera_device_port} is selected")
+            return True
+            
+        # if more than one camera device detected
+        print("\r\n",
+              "Enter one of the following numbers to select camera port:", 
+               working_device_ports)
         try: 
             user_number_input = int(input())
         except:
             print("ERROR: No valid number!", msg_not_found_port)
             return False
+        
             
         if user_number_input in working_device_ports:
             print(f"Port {user_number_input} is selected")
