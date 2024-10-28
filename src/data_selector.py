@@ -59,7 +59,7 @@ class DataSelector:
 def main():
     selector = DataSelector()
     
-    selector.select_stream('f') # 'c' or 'f'
+    selector.select_stream('c') # 'c' or 'f'
     stream = selector.get_stream()
     
     display_time_img = 1000 # in ms

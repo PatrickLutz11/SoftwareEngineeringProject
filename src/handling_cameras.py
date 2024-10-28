@@ -3,8 +3,14 @@ import cv2
 from typing import List, Tuple
 
 class CameraSearch:
-    def list_camera_devices(self)->List:
-        # src : https://stackoverflow.com/questions/57577445/list-available-cameras-opencv-python
+    @staticmethod
+    def list_camera_devices()->List[int]:
+        """checks system for avaiable and working device ports.
+
+        Returns:
+            List: list of avaiable ports (integer). Empty, otherwise.
+        """
+        # Source code: https://stackoverflow.com/questions/57577445/list-available-cameras-opencv-python
         is_working = True
         device_port = 0
         working_ports = []
@@ -46,6 +52,11 @@ class CameraOperator:
     
     
     def select_camera_device(self)->bool:
+        """users can select from found camera devices. 
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         msg_not_found_port = f"Port could not be found. Port %s remains." %(self.camera_device_port)
         working_device_ports = CameraSearch().list_camera_devices()
         if 0 not in working_device_ports:
@@ -70,6 +81,11 @@ class CameraOperator:
 
     
     def open_camera_stream(self) -> bool:
+        """opens camera stream.
+
+        Returns:
+            bool: _True, if successful. False, otherwise.
+        """
         temp_cap = self._capture
         self._capture = cv2.VideoCapture(self.camera_device_port)
         
@@ -83,11 +99,21 @@ class CameraOperator:
     
     
     def close_camera_stream(self)->bool:
+        """closes camera stream.
+
+        Returns:
+            bool: _True, if successful. False, otherwise.
+        """
         self._capture.release()
         return True
         
     
     def get_image_camera(self)->cv2.typing.MatLike:
+        """get image/frame of camera and returns it.
+
+        Returns:
+            cv2.typing.MatLike: Image of camera. None, oterwise. 
+        """
         if not self._stream_opened:
             self.open_camera_stream()
         
@@ -126,65 +152,3 @@ def main():
     
 if __name__ == "__main__":
     main()
-    
-    
-    
-    
-    
-    
-    """
-        def run_camera_stream(self) -> None:
-        frame_delay_millis = int(1000/self.camera.frames_per_second)
-        self.open_camera_stream()
-        
-        while(True):
-            retrived, frame = self._capture.read()
-            
-            if not retrived:
-                print("ERROR: Can't receive frame (stream end?). Exiting ...")
-                break
-            
-            cv2.imshow('webcame - q: end stream', frame)
-            if cv2.waitKey(frame_delay_millis) == ord('q'):
-                break
-        self._capture.release()
-        cv2.destroyAllWindows()
-    """
-    
-    """
-    class CameraDevice:
-    def __init__(self, _device_id:int=0, _fps:float=1000)->None:
-        self.device_id = _device_id
-        self.frames_per_second = _fps
-        
-        
-    def set_frames_per_second(self, new_fps:float) -> None:
-        fps = self._correct_frames_per_second(new_fps)
-        self.frames_per_second = fps
-        
-        
-    def set_device_id(self, new_device_id:int) -> None:
-        device_id = self._correct_device_id(new_device_id)
-        self.device_id = device_id
-    
-    
-    def _correct_device_id(self, _new_device_id) -> None:
-        cap = cv2.VideoCapture(_new_device_id)
-        
-        if not cap.isOpened():
-            print("ERROR: Cannot open camera")
-            exit()
-            return -1
-        cap.release()
-    
-    
-    def _correct_frames_per_second(self, new_fps:float) -> float:
-        if new_fps == 0.:
-            return -1.
-        if new_fps > 1000.:
-            return 1000.
-        
-        
-    def __str__(self):
-        return f'Camera(ID:{self.device_id}, {self.frames_per_second}fps)'
-    """

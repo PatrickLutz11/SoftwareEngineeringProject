@@ -6,23 +6,48 @@ import handling_cameras
 import handling_paths_files 
 
 class DataStream(ABC):
+    """_summary_
+
+    Args:
+        ABC (_type_): _description_
+    """
     def __init__(self)->None:
         self.current_image = None
         
     @abstractmethod
     def open_data_stream(self)->bool:
+        """setups and opens data stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         pass
     
     @abstractmethod
     def update_data_stream(self)->bool:
+        """updates data stream i.e. the current image.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         pass
     
     @abstractmethod
     def close_data_stream(self)->bool:
+        """closes data stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         pass
     
     @final
     def get_current_image(self)->cv2.typing.MatLike:
+        """get current image of data stream.
+
+        Returns:
+            cv2.typing.MatLike: current image, if successful. None, otherwise.
+        """
         return self.current_image
 
 
