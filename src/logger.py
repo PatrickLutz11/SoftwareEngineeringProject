@@ -95,29 +95,34 @@ class CSVWriter:
                 writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
                 writer.writeheader()
 
-def log_data(pattern: str, color: str, file_path='log.csv', **kwargs) -> None:
-    """Logging of entery data.
+class Log:
+    def __init__(self, file_path='log.csv'):
+        """Initialisiert das Log-Objekt.
 
-    Args:
-        pattern (str): Name of the pattern (e.g., 'Square', 'Circle').
-        color (str): Color of the shape.
-        file_path (str, optional): Path to CSV File. Defaults to 'log.csv'.
-        **kwargs: Additional optional information.
-    """
-    # Create the log entry
-    entry_creator = LogEntryCreator(pattern, color, **kwargs)
-    entry_data = entry_creator.to_dict()
+        Args:
+            file_path (str, optional): Pfad zur CSV-Datei. Standard ist 'log.csv'.
+        """
+        self.csv_writer = CSVWriter(file_path)
 
-    # Write the entry to the CSV file
-    csv_writer = CSVWriter(file_path)
-    csv_writer.write_entry(entry_data)
-    
+    def log_data(self, pattern: str, color: str, **kwargs) -> None:
+        """Loggt einen Eintrag.
+
+        Args:
+            pattern (str): Name des Musters (z.B. 'Quadrat', 'Kreis').
+            color (str): Farbe der Form.
+            **kwargs: Zusätzliche optionale Informationen.
+        """
+
+        entry_creator = LogEntryCreator(pattern, color, **kwargs)
+        entry_data = entry_creator.to_dict()
+        self.csv_writer.write_entry(entry_data)
 
 if __name__ == "__main__":
-    """Test function to demonstrate logging functionality."""
+    """Testfunktion zur Demonstration der Logging-Funktionalität."""
     try:
-        log_data("Circle", "Red", additional_info="Detected in frame 5")
-        log_data("Square", "Blue", additional_info="Detected in frame 8", confidence="High")
-        print("Entries logged successfully.")
+        logger = Log('log.csv')
+        logger.log_data("Kreis", "Rot", additional_info="Erkannt in Frame 5")
+        logger.log_data("Quadrat", "Blau", additional_info="Erkannt in Frame 8", confidence="Hoch")
+        print("Einträge erfolgreich geloggt.")
     except PermissionError as e:
         print(e)
