@@ -2,6 +2,9 @@ import cv2
 from Detection import *
 from PictureModifications import *
 
+import logger
+
+
 if __name__ == "__main__":
 
     img = cv2.imread('formen.png')
