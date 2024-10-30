@@ -1,15 +1,9 @@
-###############################
-## Software Engineering Project
-## Group B
-## Idenitfying shapes
-## Main file
-###############################
-
 import cv2
 from Detection import *
 from PictureModifications import *
 
 if __name__ == "__main__":
+
     img = cv2.imread('formen.png')
     
     searching_for_shapes = Detection.shape_detection(img)
