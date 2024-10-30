@@ -1,22 +1,20 @@
-##Software Engineering Project
-##Group B
-##
-##
+import cv2
+from Detection import *
+from PictureModifications import *
 
-class Camera:
-
-    def __init__(self) -> None:
-        pass
-        
-        
-    def open(self, port:str) -> bool:
-        """
-        """
-
-    def close(self) -> None:
-        pass
+import logger
 
 
-if __name__ == "__main__" :
-    camera = Camera()
-    camera.open(port="COM1")
+if __name__ == "__main__":
+
+    img = cv2.imread('formen.png')
+    
+    searching_for_shapes = Detection.shape_detection(img)
+    
+    Detection.shape_recognition(searching_for_shapes, img)
+    
+    img = PictureModifications.resize_the_picture(img)
+    
+    cv2.imshow('shapes', img)
+    cv2.waitKey(0) 
+    cv2.destroyAllWindows()
