@@ -5,6 +5,15 @@ from typing import List, Tuple
 class Detection:
     
     def shape_detection(img) -> List:
+        """Shape detection from the image
+
+        Args:
+            img (): The image with shapes
+
+        Returns:
+            List: The shapes within the image
+        """
+        
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
@@ -17,6 +26,13 @@ class Detection:
 
             
     def shape_recognition(found_shapes,img) -> None:
+        """Identification of found shapes
+
+        Args:
+            found_shapes (_type_): Found shapes within the image
+            img (_type_): The image with shapes
+        """
+        
         i = 0
         for shape in found_shapes:
             if i == 0:
@@ -59,6 +75,16 @@ class Detection:
                 
                 
     def get_color(img, shape) -> str:
+        """Identifying the color of the found shapes
+
+        Args:
+            img (_type_): The image with shapes
+            shape (_type_): Shapes found within the image
+
+        Returns:
+            str: The color of the shape
+        """
+        
         mask = np.zeros(img.shape[:2], dtype="uint8")
         cv2.drawContours(mask, [shape], -1, 255, -1)
         
