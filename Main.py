@@ -1,20 +1,14 @@
-import cv2
-from Detection import *
-from PictureModifications import *
+import sys
+import os
+import tkinter as tk
 
-import logger
+# Adjust the path to include the src directory
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
+# Import the GUI class
+from gui import ObjectPatternRecognizerGUI
 
 if __name__ == "__main__":
-
-    img = cv2.imread('formen.png')
-    
-    searching_for_shapes = Detection.shape_detection(img)
-    
-    Detection.shape_recognition(searching_for_shapes, img)
-    
-    img = PictureModifications.resize_the_picture(img)
-    
-    cv2.imshow('shapes', img)
-    cv2.waitKey(0) 
-    cv2.destroyAllWindows()
+    root = tk.Tk()
+    app = ObjectPatternRecognizerGUI(root)
+    root.mainloop()
