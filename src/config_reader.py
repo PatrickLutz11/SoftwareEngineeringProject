@@ -1,4 +1,4 @@
-import configparser 
+from configparser import ConfigParser
 
 class ConfigReader:
     def __init__(self, config_path:str='config.ini')->None:
@@ -12,7 +12,7 @@ class ConfigReader:
                     - str   : path of output folder
                     - bool  : True, if relative path. False, otherwise
         """
-        config = configparser.ConfigParser()
+        config = ConfigParser()
         config.read(self._config_path)
         path_in = str(config.get('PATHS', 'dir_input'))
         is_relative_in = bool(config.get('PATHS', 'is_relative_path_in'))
