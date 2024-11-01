@@ -4,8 +4,8 @@ from typing import Callable, Optional, Any
 
 import cv2
 
-from Detection import Detection
-from PictureModifications import PictureModifications
+from detection import Detection
+from picture_modifications import PictureModifications
 from logger import Log
 from data_selector import DataSelector
 from data_stream import DataStream
