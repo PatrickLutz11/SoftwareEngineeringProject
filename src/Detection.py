@@ -3,26 +3,49 @@ import numpy as np
 from typing import List, Tuple
 
 class Detection:
-    
-    def shape_detection(img) -> List:
+    def shape_detection(img:cv2.MatLike, ratio_image_to_shape:int=10) -> List:
         """Shape detection from the image
 
         Args:
-            img (): The image with shapes
+            img (cv2.MatLike): The image with shapes
+            ratio_image_to_shape (float): Ratio of image to shape, i.e. 
+                                          how many times the image is bigger 
+                                          than the shape. Defaults to 100.
 
         Returns:
             List: The shapes within the image
         """
-        
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+        area_of_img = gray_img.shape[0]*gray_img.shape[1]
+        miniumum_area_for_shape = int(area_of_img/ratio_image_to_shape
 
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
         
         thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
         
-        found_shapes, _ = cv2.findContours(thresholded, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)      
+        contours, _ = cv2.findContours(thresholded, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        found_shapes = sorted(contours, key=cv2.contourArea, reverse=True)[1:] # excluding background
         
-        return found_shapes
+        filtered_found_shapes = []
+        for shape in found_shapes:
+            area = cv2.contourArea(shape)
+            if len(area_found_shapes) > 0:
+                if miniumum_area_for_shape > area:
+                    break
+            filtered_found_shapes.append(shape)
+        
+        # Debugging 
+        if False: 
+            cv2.imshow("gray", gray_img)
+            cv2.imshow("blurred", blurred)
+            cv2.imshow("thresholded", thresholded)
+            img_contours = cv2.drawContours(img, filtered_found_shapes, -1, (120, 255, 0), 1)
+            cv2.imshow("Contours", img_contours)
+            print(len(contours))
+            print(len(found_shapes))
+            print(len(filtered_found_shapes))
+        
+        return filtered_found_shapes # found_shapes
 
             
     def shape_recognition(found_shapes,img) -> None:
@@ -106,4 +129,17 @@ class Detection:
             return "Violet"
         
         else:
-            return "Unknown Color"
+            return "" # Unknown Color
+        
+        
+if __name__ == "__main__": 
+    img = cv2.imread(R"in/test_image_03.jpg")#(R"in/test_image_03.jpg")
+    cv2.imshow("test", img)
+    shapes = Detection.shape_detection(img)
+    print(len(shapes))
+
+    Detection.shape_recognition(shapes, img)
+    cv2.imshow("newimage", img)
+
+    if cv2.waitKey() == ord('q'):
+        cv2.destroyAllWindows()
