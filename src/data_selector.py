@@ -3,82 +3,57 @@ programm to select data channel and get data stream of selected channel.
 """
 
 from data_stream import DataStream, CameraStream, FolderStream
-import cv2
-from abc import ABC, abstractmethod
-
+from typing import Optional
 
 class DataSelector:
     _camera_keywords = ["c", "camera", "cam"]
-    _folder_keywords = ["f", "folder"]
-    
-    def __init__(self, source_type:str="c")->None:
-        """initialize DataSelector
+    _image_keywords = ["i", "image"]
+
+    def __init__(self, source_type: str = "c", folder_path: str = "") -> None:
+        """Initialize DataSelector
 
         Args:
-            source_type (str, optional): Name of source. Defaults to "c".
-
-        Raises:
-            ValueError: if no stream is matching
+            source_type (str, optional): Type of source. Defaults to "c".
+            folder_path (str, optional): Path to the image folder (only for image mode). Defaults to "".
         """
-        if source_type in self._camera_keywords:
-            self.stream = CameraStream()
-        elif source_type in self._folder_keywords:
-            self.stream = FolderStream()
-        else:
-            self.stream = None
-            raise ValueError("Invalid source type")
-    
-    
-    def select_stream(self, source_type:str='f')->bool:
-        """selects and sets the data stream for the input.
+        self.folder_path = folder_path
+        self.stream: Optional[DataStream] = None
+        self.select_stream(source_type, folder_path)
+
+    def select_stream(self, source_type: str = 'c', folder_path: str = "") -> bool:
+        """Selects and sets the data stream based on the source type.
 
         Args:
-            source_type (str): The stream where to take an image from
-                ["c", "camera", "cam"]: to select camera as data stream
-                ["f", "folder"]:        to select folder as data stream
-                
+            source_type (str): The data source type.
+                ["c", "camera", "cam"]: Camera stream
+                ["i", "image"]: Image folder stream
+
         Returns:
-            bool: True, if successful. False otherwise.
+            bool: True if successful, False otherwise.
         """
+        source_type = source_type.lower()
         if source_type in self._camera_keywords:
-            print(f"\r\ncamera input selected")
+            print("\nCamera input selected.")
             self.stream = CameraStream()
             return True
-        
-        if source_type in self._folder_keywords:
-            print(f"\r\nfolder input selected")
-            self.stream = FolderStream()
+
+        if source_type in self._image_keywords:
+            if not folder_path:
+                print("Error: Folder path must be provided for ImageStream.")
+                self.stream = None
+                return False
+            print("\nImage folder input selected.")
+            self.stream = FolderStream(folder_path=folder_path)
             return True
-        
+
+        print("Invalid source type selected.")
+        self.stream = None
         return False
-    
-    
-    def get_stream(self) -> DataStream:
-        """get selected data stream
+
+    def get_stream(self) -> Optional[DataStream]:
+        """Get selected data stream
 
         Returns:
-            DataStream: data of slected stream. None, otherwise.
+            DataStream: Data stream instance or None.
         """
         return self.stream
-    
-
-
-
-def main():
-    selector = DataSelector()
-    
-    selector.select_stream('c') # 'c' or 'f'
-    stream = selector.get_stream()
-    
-    display_time_img = 1000 # in ms
-    is_opened = stream.open_data_stream()
-    while(is_opened):
-        img = stream.get_current_image()
-        cv2.imshow("q: end stream", img)
-        if cv2.waitKey(display_time_img) == ord('q'):
-            break
-        stream.update_data_stream()
-    stream.close_data_stream()
-    
-if __name__ == "__main__":
-    main()
