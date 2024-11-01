@@ -1,8 +1,6 @@
-import os
 import threading
 from typing import Callable, Optional, Any
 
-import cv2
 
 from detection import Detection
 from picture_modifications import PictureModifications
