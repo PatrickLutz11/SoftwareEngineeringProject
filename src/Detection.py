@@ -17,7 +17,7 @@ class Detection:
         """
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
         area_of_img = gray_img.shape[0]*gray_img.shape[1]
-        miniumum_area_for_shape = int(area_of_img/ratio_image_to_shape
+        miniumum_area_for_shape = int(area_of_img/ratio_image_to_shape)
 
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
         
@@ -29,9 +29,8 @@ class Detection:
         filtered_found_shapes = []
         for shape in found_shapes:
             area = cv2.contourArea(shape)
-            if len(area_found_shapes) > 0:
-                if miniumum_area_for_shape > area:
-                    break
+            if miniumum_area_for_shape > area:
+                break
             filtered_found_shapes.append(shape)
         
         # Debugging 
@@ -45,17 +44,16 @@ class Detection:
             print(len(found_shapes))
             print(len(filtered_found_shapes))
         
-        return filtered_found_shapes # found_shapes
+        return filtered_found_shapes 
 
             
-    def shape_recognition(found_shapes,img) -> None:
+    def shape_recognition(found_shapes:List, img:cv2.MatLike) -> None:
         """Identification of found shapes
 
         Args:
-            found_shapes (_type_): Found shapes within the image
-            img (_type_): The image with shapes
+            found_shapes (List): List of found shapes within the image
+            img (cv2.MatLike): The image with shapes
         """
-        
         i = 0
         for shape in found_shapes:
             if i == 0:
@@ -97,16 +95,16 @@ class Detection:
                 cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                 
                 
-    def get_color(img, shape) -> str:
+    def get_color(img:cv2.MatLike, shape:List) -> str:
         """Identifying the color of the found shapes
 
         Args:
-            img (_type_): The image with shapes
-            shape (_type_): Shapes found within the image
+            img (cv2.MatLike): The image with shapes
+            shape (List): Shapes found within the image
 
         Returns:
             str: The color of the shape
-        """
+        """        
         
         mask = np.zeros(img.shape[:2], dtype="uint8")
         cv2.drawContours(mask, [shape], -1, 255, -1)
@@ -133,6 +131,8 @@ class Detection:
         
         
 if __name__ == "__main__": 
+    """Debugging of functions
+    """
     img = cv2.imread(R"in/test_image_03.jpg")#(R"in/test_image_03.jpg")
     cv2.imshow("test", img)
     shapes = Detection.shape_detection(img)
