@@ -14,22 +14,38 @@ class DataStream(ABC):
 
     @abstractmethod
     def open_data_stream(self) -> bool:
-        """Sets up and opens the data stream."""
+        """setups and opens data stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         pass
 
     @abstractmethod
     def update_data_stream(self) -> bool:
-        """Updates the data stream."""
+        """updates data stream i.e. the current image.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         pass
 
     @abstractmethod
     def close_data_stream(self) -> bool:
-        """Closes the data stream."""
+        """closes data stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         pass
 
     @final
     def get_current_image(self) -> Optional[cv2.Mat]:
-        """Returns the current image of the data stream."""
+        """get current image of data stream.
+
+        Returns:
+            cv2.typing.MatLike: current image, if successful. None, otherwise.
+        """
         return self.current_image
 
 
@@ -54,47 +70,36 @@ class CameraStream(DataStream):
 
 
 class FolderStream(DataStream):
-    def __init__(self, folder_path: str) -> None:
+    def __init__(self, _folder_path:str="") -> None:
         super().__init__()
-        self.folder_path = folder_path
-        self.image_list: Optional[List[str]] = []
-        self._id_image: int = 0
-        self.ph = handling_paths_files.PathHandling()
+        self.image_list = []
+        self._id_image:int = 0
+        
+        self.ph = handling_paths_files.PathHandling(_folder_path)
         self.fh = handling_paths_files.FileHandling()
 
     def open_data_stream(self) -> bool:
-        if not self.ph.check_path_validity(self.folder_path):
-            print(f"Error: Invalid path {self.folder_path}")
+        input_path = self.ph.get_path_abs_input()
+        if not (self.ph.check_path_validity(input_path)):
             return False
-        self.fh = handling_paths_files.FileHandling(self.folder_path)
-        self.image_list = self.fh.open_all_files()[0]  # Assuming this returns a list of image paths
-        if not self.image_list:
-            print("ERROR: No images found in the specified folder.")
+        self.fh = handling_paths_files.FileHandling(input_path)
+        self.image_list = self.fh.open_all_files()[0]
+        if len(self.image_list[0]) == 0:
+            print("ERROR: no Image found")
             return False
         self._id_image = 0
         return self.update_data_stream()
 
     def update_data_stream(self) -> bool:
-        if self._id_image < len(self.image_list):
-            image_path = self.image_list[self._id_image]
-            self.current_image = cv2.imread(image_path)
-            if self.current_image is None:
-                print(f"Warning: Unable to load image {image_path}. Skipping.")
-                self._id_image += 1
-                return self.update_data_stream()
+        amount_images = len(self.image_list)
+        if amount_images > self._id_image:
+            self.current_image = self.image_list[self._id_image]
             self._id_image += 1
             return True
-        else:
-            self._id_image = 0  # Restart from the beginning if needed
-            return False
+        return False
 
     def close_data_stream(self) -> bool:
         self.current_image = None
         self.image_list = []
         self._id_image = 0
         return True
-
-    def get_current_image_path(self) -> Optional[str]:
-        if 0 <= self._id_image - 1 < len(self.image_list):
-            return self.image_list[self._id_image - 1]
-        return None
