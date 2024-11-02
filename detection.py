@@ -3,11 +3,11 @@ import numpy as np
 from typing import List, Tuple
 
 class Detection:
-    def shape_detection(img:cv2.MatLike, ratio_image_to_shape:int=10) -> List:
+    def shape_detection(img:cv2.typing.MatLike, ratio_image_to_shape:int=100) -> List:
         """Shape detection from the image
 
         Args:
-            img (cv2.MatLike): The image with shapes
+            img (cv2.typing.MatLike): The image with shapes
             ratio_image_to_shape (float): Ratio of image to shape, i.e. 
                                           how many times the image is bigger 
                                           than the shape. Defaults to 100.
@@ -34,7 +34,7 @@ class Detection:
             filtered_found_shapes.append(shape)
         
         # Debugging 
-        if False: 
+        if None: 
             cv2.imshow("gray", gray_img)
             cv2.imshow("blurred", blurred)
             cv2.imshow("thresholded", thresholded)
@@ -47,12 +47,12 @@ class Detection:
         return filtered_found_shapes 
 
             
-    def shape_recognition(found_shapes:List, img:cv2.MatLike) -> None:
+    def shape_recognition(found_shapes:List, img:cv2.typing.MatLike) -> None:
         """Identification of found shapes
 
         Args:
             found_shapes (List): List of found shapes within the image
-            img (cv2.MatLike): The image with shapes
+            img (cv2.typing.MatLike): The image with shapes
         """
         i = 0
         for shape in found_shapes:
@@ -95,11 +95,11 @@ class Detection:
                 cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
                 
                 
-    def get_color(img:cv2.MatLike, shape:List) -> str:
+    def get_color(img:cv2.typing.MatLike, shape:List) -> str:
         """Identifying the color of the found shapes
 
         Args:
-            img (cv2.MatLike): The image with shapes
+            img (cv2.typing.MatLike): The image with shapes
             shape (List): Shapes found within the image
 
         Returns:
