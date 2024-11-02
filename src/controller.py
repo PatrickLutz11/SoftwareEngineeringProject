@@ -1,35 +1,53 @@
-import threading
-from typing import Callable, Optional, Any
+"""Module for managing object detection in camera and image streams."""
 
-from shape_detection import Detection
-from picture_modifications import PictureModifications
-from logger import Logger
+import threading
+from typing import Any, Callable, Optional
+
 from data_selector import DataSelector
 from data_streams import DataStream
+from logger import Logger
+from picture_modifications import PictureModifications
+from shape_detection import Detection
 
 
 class DetectionController:
-    """Controller for managing image and camera detection."""
+    """Controls and manages object detection processes for camera and image inputs.
+
+    This class handles the initialization and management of detection processes,
+    including thread management, stream handling, and logging of detected objects.
+
+    Attributes:
+        mode: Current detection mode selector (CAMERA/IMAGE).
+        image_path: Path to image directory for IMAGE mode.
+        show_image_callback: Callback function to display processed images.
+        update_status_callback: Callback function to update status messages.
+        running: Boolean indicating if detection is currently active.
+        detection_thread: Thread object for running detection process.
+        stop_event: Threading event to signal detection stopping.
+        logger: Logger instance for recording detection results.
+        data_selector: Selector for managing different input streams.
+        stream: Current active data stream.
+    """
 
     def __init__(
         self,
-        mode,
-        image_path,
+        mode: Any,
+        image_path: Any,
         show_image_callback: Callable[[Any, str], None],
         update_status_callback: Callable[[str], None],
         log_file_path: str = 'log.csv',
         source_type: str = "c"
     ) -> None:
-        """
-        Initializes the controller.
+        """Initialize the DetectionController.
 
         Args:
-            mode: Current mode with a `get()` method that returns "CAMERA" or "IMAGE".
-            image_path: Object with a `get()` method that returns the path to the folder (only in IMAGE mode).
-            show_image_callback: Callback function to display the image.
-            update_status_callback: Callback function to update the status.
-            log_file_path: Path to the CSV log file. Defaults to 'log.csv'.
-            source_type: Type of data source ("c" for camera, "i" for image folder). Defaults to "c".
+            mode: Mode selector with get() method returning "CAMERA" or "IMAGE".
+            image_path: Object with get() method returning folder path for IMAGE mode.
+            show_image_callback: Function to display processed images.
+            update_status_callback: Function to update status messages.
+            log_file_path: Path to CSV log file. Defaults to 'log.csv'.
+            source_type: Type of data source ("c" for camera, "i" for images).
+                Defaults to "c".
         """
         self.mode = mode
         self.image_path = image_path
@@ -39,150 +57,202 @@ class DetectionController:
         self.detection_thread: Optional[threading.Thread] = None
         self.stop_event = threading.Event()
         self.logger = Logger(file_path=log_file_path)
+        self.data_selector = None
+        self.stream = None
+        
+        # Initialize data selector
+        self._initialize_data_selector(
+            source_type,
+            self.image_path.get() if self.mode.get().upper() == "IMAGE" else ""
+        )
 
-        # Initialize DataSelector based on the initial mode
-        current_mode = self.mode.get().upper()
-        folder_path = self.image_path.get() if current_mode == "IMAGE" else ""
-        self.data_selector = DataSelector(source_type=source_type, folder_path=folder_path)
-        print(f"Logger initialized with path: {log_file_path}")
-        print(f"DataSelector initialized with source type: {source_type}")
+    def _initialize_data_selector(self, source_type: str, folder_path: str = "") -> None:
+        """Initialize the DataSelector with given parameters.
+
+        Args:
+            source_type: Type of data source ("c" for camera, "i" for images).
+            folder_path: Path to image folder for IMAGE mode. Defaults to empty.
+        """
+        try:
+            self.data_selector = DataSelector(
+                source_type=source_type,
+                folder_path=folder_path
+            )
+            print(f"DataSelector initialized with source type: {source_type}")
+        except Exception as e:
+            print(f"Error initializing DataSelector: {e}")
+            self.update_status_callback(f"Error initializing data source: {e}")
 
     def start_detection(self) -> None:
-        """Starts object detection in a separate thread."""
-        if not self.running:
-            current_mode = self.mode.get().upper()
+        """Start object detection in a separate thread.
 
-            if current_mode in ["CAMERA", "IMAGE"]:
-                folder_path = self.image_path.get() if current_mode == "IMAGE" else ""
-                success = self.data_selector.select_stream(
-                    source_type="i" if current_mode == "IMAGE" else "c",
-                    folder_path=folder_path
-                )
-                if not success:
-                    self.update_status_callback("Status: Failed to initialize data source.")
-                    return
+        Initializes the appropriate data stream based on current mode and starts
+        the detection process in a separate thread.
+        """
+        if self.running:
+            return
 
-                stream = self.data_selector.get_stream()
-                if not stream:
-                    self.update_status_callback("Status: Data source could not be initialized.")
-                    return
+        current_mode = self.mode.get().upper()
+        if current_mode in ["CAMERA", "IMAGE"]:
+            if not self._setup_stream(current_mode):
+                return
 
-                if not stream.open_data_stream():
-                    self.update_status_callback("Status: Data source could not be opened.")
-                    return
+        self.running = True
+        self.stop_event.clear()
+        self.update_status_callback("Status: Detection running...")
+        self.detection_thread = threading.Thread(
+            target=self.run_detection,
+            daemon=True
+        )
+        self.detection_thread.start()
 
-            self.running = True
-            self.update_status_callback("Status: Detection running...")
-            self.detection_thread = threading.Thread(
-                target=self.run_detection, daemon=True
-            )
-            self.detection_thread.start()
+    def _setup_stream(self, mode: str) -> bool:
+        """Set up the data stream for detection.
+
+        Args:
+            mode: Current detection mode ("CAMERA" or "IMAGE").
+
+        Returns:
+            bool: True if stream setup was successful, False otherwise.
+        """
+        try:
+            folder_path = self.image_path.get() if mode == "IMAGE" else ""
+            source_type = "i" if mode == "IMAGE" else "c"
+            
+            if not self.data_selector.select_stream(
+                source_type=source_type,
+                folder_path=folder_path
+            ):
+                self.update_status_callback("Status: Failed to initialize source.")
+                return False
+
+            self.stream = self.data_selector.get_stream()
+            if not self.stream or not self.stream.open_data_stream():
+                self.update_status_callback("Status: Could not open data source.")
+                return False
+            
+            return True
+
+        except Exception as e:
+            self.update_status_callback(f"Error starting detection: {e}")
+            return False
 
     def stop_detection(self) -> None:
-        """Stops the ongoing object detection."""
-        if self.running:
+        """Stop the ongoing object detection process.
+
+        Signals the detection thread to stop and closes the data stream.
+        """
+        if not self.running:
+            return
+
+        try:
             self.running = False
             self.stop_event.set()
             self.update_status_callback("Status: Stopping detection...")
-            stream = self.data_selector.get_stream()
-            if stream:
-                stream.close_data_stream()
+            
             if self.detection_thread and self.detection_thread.is_alive():
-                self.detection_thread.join()
+                self.detection_thread.join(timeout=2.0)
+            
+            if self.stream:
+                try:
+                    self.stream.close_data_stream()
+                finally:
+                    self.stream = None
+            
             self.update_status_callback("Status: Detection stopped.")
 
+        except Exception as e:
+            print(f"Error in stop_detection: {e}")
+            self.update_status_callback(f"Error stopping detection: {e}")
+            self.running = False
+            self.stream = None
+
     def run_detection(self) -> None:
-        """Performs object detection based on the current mode."""
+        """Execute the main detection loop based on current mode."""
         try:
             current_mode = self.mode.get().upper()
             print(f"Current mode: {current_mode}")
 
-            if current_mode in ["CAMERA", "IMAGE"]:
-                stream = self.data_selector.get_stream()
-                if not stream:
-                    self.update_status_callback("Status: No valid data source selected.")
-                    self.running = False
-                    return
-                self.detect_from_stream(stream, mode=current_mode)
-            else:
+            if current_mode not in ["CAMERA", "IMAGE"]:
                 self.update_status_callback(f"Status: Unknown mode '{current_mode}'.")
+                return
+
+            if not self.stream:
+                self.update_status_callback("Status: No valid data source selected.")
+                return
+
+            self.detect_from_stream(self.stream, mode=current_mode)
+
         except Exception as e:
             self.update_status_callback(f"Error: {e}")
             print(f"Error in run_detection: {e}")
         finally:
             self.running = False
-            self.update_status_callback("Status: Detection stopped.")
+            self.update_status_callback("Status: Detection completed.")
 
     def detect_from_stream(self, stream: DataStream, mode: str) -> None:
-        """Performs object detection using the selected data stream.
+        """Process images from the data stream and perform object detection.
 
         Args:
-            stream (DataStream): The data stream to use.
-            mode (str): The current mode ("CAMERA" or "IMAGE").
+            stream: Data stream providing images for processing.
+            mode: Current detection mode ("CAMERA" or "IMAGE").
         """
         self.update_status_callback(f"Status: {mode} detection started.")
         frame_count = 0
+        
         while self.running and not self.stop_event.is_set():
-            img = stream.get_current_image()
-            if img is None:
-                self.update_status_callback("Status: No more images to process.")
-                print("Status: No more images to process.")
+            try:
+                img = stream.get_current_image()
+                if img is None:
+                    print("No image received from stream")
+                    break
+
+                frame_count += 1
+                self._process_frame(img, frame_count, mode)
+
+                if not stream.update_data_stream():
+                    print("Failed to update data stream")
+                    break
+
+            except Exception as e:
+                print(f"Error processing frame: {e}")
                 break
 
-            frame_count += 1
+        self._cleanup_stream(mode)
 
-            # Perform shape detection and recognition
-            searching_for_shapes = Detection.shape_detection(img)
-            recognized_shapes = Detection.shape_recognition(searching_for_shapes, img)
-            print(f"Frame {frame_count}: Recognized shapes: {recognized_shapes}")
+    def _process_frame(self, img: Any, frame_count: int, mode: str) -> None:
+        """Process a single frame for object detection.
 
-            # Resize image for display
-            img = PictureModifications.resize_the_picture(img)
+        Args:
+            img: Image data to process.
+            frame_count: Current frame number.
+            mode: Current detection mode.
+        """
+        shapes = Detection.shape_detection(img)
+        recognized = Detection.shape_recognition(shapes, img)
+        
+        img = PictureModifications.resize_the_picture(img)
+        self.show_image_callback(img)
 
-            # Update the GUI with the processed image
-            self.show_image_callback(img)
+        for shape in recognized:
+            try:
+                self.logger.log_data(
+                    pattern=shape.get('pattern', 'Unknown'),
+                    color=shape.get('color', 'Unknown'),
+                    frame=frame_count if mode == "CAMERA" else None,
+                    confidence=shape.get('confidence', 'N/A')
+                )
+            except Exception as e:
+                print(f"Logging error: {e}")
 
-            # Log each recognized shape
-            for shape in recognized_shapes:
-                try:
-                    pattern = shape.get('pattern', 'Unknown')
-                    color = shape.get('color', 'Unknown')
-                    confidence = shape.get('confidence', 'N/A')
-                    print(f"Logging - Pattern: {pattern}, Color: {color}, Confidence: {confidence}")
-                    if mode == "CAMERA":
-                        self.logger.log_data(
-                            pattern=pattern,
-                            color=color,
-                            frame=frame_count,
-                            confidence=confidence
-                        )
-                    elif mode == "IMAGE":
-                        self.logger.log_data(
-                            pattern=pattern,
-                            color=color,
-                            #image_path=image_path if image_path else "N/A",
-                            confidence=confidence
-                        )
-                except PermissionError as e:
-                    self.update_status_callback(f"Logging Error: {e}")
-                    print(f"Logging Error: {e}")
-                except Exception as e:
-                    self.update_status_callback(f"Unexpected Logging Error: {e}")
-                    print(f"Unexpected Logging Error: {e}")
+    def _cleanup_stream(self, mode: str) -> None:
+        """Clean up the data stream after detection is complete.
 
-            # Update the data stream to the next image
-            success = stream.update_data_stream()
-            if not success:
-                print("Error updating data stream.")
-                break
-
-        # Close the data stream after processing all images
-        if mode == "IMAGE":
-            stream.close_data_stream()
-
-        if self.running:
-            self.update_status_callback(f"Status: {mode} detection completed.")
-            print(f"Status: {mode} detection completed.")
-        else:
-            self.update_status_callback(f"Status: {mode} detection stopped.")
-            print(f"Status: {mode} detection stopped.")
+        Args:
+            mode: Current detection mode.
+        """
+        try:
+            if mode == "IMAGE" or self.stop_event.is_set():
+                self.stream.close_data_stream()
+        except Exception as e:
+            print(f"Error closing stream: {e}")
