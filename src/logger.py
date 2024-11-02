@@ -1,6 +1,29 @@
 import csv
 import os
 from datetime import datetime
+from modificators_csv import CSVWriter
+
+class Logger:
+    def __init__(self, file_path='log.csv'):
+        """Initialize CSV writer with file path.
+
+        Args:
+            file_path (str, optional): path to CSV-log. Defaults to 'log.csv'.
+        """
+        self.csv_writer = CSVWriter(file_path)
+
+    def log_data(self, pattern: str, color: str, **kwargs) -> None:
+        """Loggt einen Eintrag.
+
+        Args:
+            pattern (str): Name des Musters (z.B. 'Quadrat', 'Kreis').
+            color (str): Farbe der Form.
+            **kwargs: Zusätzliche optionale Informationen.
+        """
+
+        entry_creator = LogEntryCreator(pattern, color, **kwargs)
+        entry_data = entry_creator.to_dict()
+        self.csv_writer.write_entry(entry_data)
 
 class TimestampGenerator:
     @staticmethod
@@ -40,88 +63,13 @@ class LogEntryCreator:
         data.update(self.additional_data)
         return data
 
-class WritePermissionChecker:
-    @staticmethod
-    def can_write(file_path: str) -> bool:
-        """Check if the file exists and is writable.
 
-        Args:
-            file_path (str): path of file
-
-        Returns:
-            bool: True, path is file. False, otherwise. 
-        """
-        if os.path.isfile(file_path):
-            return os.access(file_path, os.W_OK)
-        else:
-            directory = os.path.dirname(file_path) or '.'
-            return os.access(directory, os.W_OK)
-
-class CSVWriter:
-    def __init__(self, file_path: str):
-        """Initialize CSV writer with file path.
-
-        Args:
-            file_path (str): path of logger file
-        """
-        self.file_path = file_path
-        self.fieldnames = None
-
-    def write_entry(self, data: dict) -> None:
-        """Write log entry to CSV file.
-
-        Args:
-            data (dict): data as dict
-
-        Raises:
-            PermissionError: permission to write file
-        """
-        if self.fieldnames is None:
-            self.fieldnames = list(data.keys())
-            self._ensure_file_exists()
-
-        if WritePermissionChecker.can_write(self.file_path):
-            with open(self.file_path, mode='a', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
-                writer.writerow(data)
-        else:
-            raise PermissionError(f"No write permission for file: {self.file_path}")
-
-    def _ensure_file_exists(self) -> None:
-        """Create CSV file with header if it does not exist.
-        """
-        if not os.path.isfile(self.file_path):
-            with open(self.file_path, mode='w', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames)
-                writer.writeheader()
-
-class Log:
-    def __init__(self, file_path='log.csv'):
-        """Initialisiert das Log-Objekt.
-
-        Args:
-            file_path (str, optional): Pfad zur CSV-Datei. Standard ist 'log.csv'.
-        """
-        self.csv_writer = CSVWriter(file_path)
-
-    def log_data(self, pattern: str, color: str, **kwargs) -> None:
-        """Loggt einen Eintrag.
-
-        Args:
-            pattern (str): Name des Musters (z.B. 'Quadrat', 'Kreis').
-            color (str): Farbe der Form.
-            **kwargs: Zusätzliche optionale Informationen.
-        """
-
-        entry_creator = LogEntryCreator(pattern, color, **kwargs)
-        entry_data = entry_creator.to_dict()
-        self.csv_writer.write_entry(entry_data)
 
 if __name__ == "__main__":
-    """Testfunktion zur Demonstration der Logging-Funktionalität."""
+    """Testing of functions of this file"""
     try:
-        logger = Log('log.csv')
-        logger.log_data("Kreis", "Rot", additional_info="Erkannt in Frame 5")
+        logger = Logger('log.csv')
+        logger.log_data("Circle", "Red", additional_info="Erkannt in Frame 5")
         logger.log_data("Quadrat", "Blau", additional_info="Erkannt in Frame 8", confidence="Hoch")
         print("Einträge erfolgreich geloggt.")
     except PermissionError as e:
