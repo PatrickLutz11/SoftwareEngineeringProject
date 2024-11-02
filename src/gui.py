@@ -4,10 +4,7 @@ from tkinter import filedialog, ttk
 from typing import Any, Optional
 
 import cv2
-<<<<<<< HEAD
 
-=======
->>>>>>> 4be32b6c5e584b38808e2b03fe9791a02c3fdef7
 from PIL import Image, ImageTk
 
 from controller import DetectionController
