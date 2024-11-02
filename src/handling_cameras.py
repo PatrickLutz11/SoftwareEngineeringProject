@@ -1,66 +1,164 @@
+import numpy as np
 import cv2
-from typing import Union
+from typing import List, Tuple
+
+class CameraSearch:
+    @staticmethod
+    def list_camera_devices()->List[int]:
+        """checks system for avaiable and working device ports.
+
+        Returns:
+            List: list of avaiable ports (integer). Empty, otherwise.
+        """
+        # Source code: https://stackoverflow.com/questions/57577445/list-available-cameras-opencv-python
+        is_working = True
+        device_port = 0
+        working_ports = []
+        available_ports = []
+        
+        print("searching for avaiable camera devices...")
+        while is_working:
+            camera = cv2.VideoCapture(device_port)
+            if not camera.isOpened():
+                is_working = False
+                print("Port %s is not working." %device_port)
+                camera.release()
+                
+            else:
+                is_reading, img = camera.read()
+                width_camera = camera.get(3)
+                height_camera = camera.get(4)
+                
+                if is_reading:
+                    print("Port %s is working and reads images (%s x %s)" %(device_port,height_camera,width_camera))
+                    working_ports.append(device_port)
+                else:
+                    print("Port %s for camera ( %s x %s) is present but does not reads." %(device_port,height_camera,width_camera))
+                    available_ports.append(device_port)
+            device_port +=1
+        return working_ports
+
+
 
 class CameraOperator:
-    def __init__(self):
-        self.cap = None
-        self.device_index = 0
+    def __init__(self, _camera_device_port:int=0)->None:
+        self.camera_device_port = 0
+        if _camera_device_port >= 0:
+            self.camera_device_port = _camera_device_port
+        
+        self._capture = cv2.VideoCapture(self.camera_device_port)
+        self._stream_opened = False
+        self._camera_available = True
+    
+    
+    def select_camera_device(self)->bool:
+        """users can select from found camera devices. 
 
-    def select_camera_device(self, device_index: int = 0) -> bool:
-        """Select and initialize the camera device."""
-        self.device_index = device_index
-        self.cap = cv2.VideoCapture(device_index)
-        if self.cap.isOpened():
-            print(f"INFO: Camera device {device_index} successfully selected.")
-        else:
-            print(f"ERROR: Failed to open camera device {device_index}.")
-        return self.cap.isOpened()
-
-    def open_camera_stream(self) -> bool:
-        """Check if the camera stream is open."""
-        if self.cap is None:
-            print("ERROR: No camera device selected.")
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
+        msg_not_found_port = f"Port could not be found. Port %s remains." %(self.camera_device_port)
+        working_device_ports = CameraSearch().list_camera_devices()
+        if len(working_device_ports) == 0:
+            print("ERROR: No avaiable camera device detected.")
+            self._camera_available = False
             return False
-        if not self.cap.isOpened():
-            print("ERROR: Camera stream is not open.")
-            return False
-        print(f"INFO: Camera stream {self.device_index} is open.")
-        return True
-
-    def get_image_camera(self) -> Union[None, cv2.Mat]:
-        """Capture an image from the camera."""
-        if self.cap is None or not self.cap.isOpened():
-            print("ERROR: Camera is not open.")
-            return None
-        ret, frame = self.cap.read()
-        if not ret:
-            print("ERROR: Failed to capture image from camera.")
-            return None
-        return frame
-
-    def show_camera_feed(self, window_name: str = "Camera Feed", delay: int = 1) -> None:
-        """Display the live camera feed."""
-        if not self.open_camera_stream():
-            return
-
-        print("INFO: Press 'q' to quit the camera feed.")
-        while True:
-            frame = self.get_image_camera()
-            if frame is None:
-                break
-            cv2.imshow(window_name, frame)
-            if cv2.waitKey(delay) & 0xFF == ord('q'):
-                break
-
-        self.close_camera_stream()
-        cv2.destroyAllWindows()
-
-    def close_camera_stream(self) -> bool:
-        """Closes the camera stream."""
-        if self.cap:
-            self.cap.release()
-            self.cap = None
-            print(f"INFO: Camera device {self.device_index} released.")
+        
+        # if only one device is detected
+        if len(working_device_ports) == 1:
+            self.camera_device_port = working_device_ports[0]
+            print(f"\r\nPort {self.camera_device_port} is selected")
             return True
-        print("INFO: No camera stream to close.")
+            
+        # if more than one camera device detected
+        print("\r\n",
+              "Enter one of the following numbers to select camera port:", 
+               working_device_ports)
+        try: 
+            user_number_input = int(input())
+        except:
+            print("ERROR: No valid number!", msg_not_found_port)
+            return False
+        
+            
+        if user_number_input in working_device_ports:
+            print(f"Port {user_number_input} is selected")
+            self.camera_device_port = user_number_input
+            return True
+        else: 
+            print(msg_not_found_port)
         return False
+
+    
+    def open_camera_stream(self) -> bool:
+        """opens camera stream.
+
+        Returns:
+            bool: _True, if successful. False, otherwise.
+        """
+        temp_cap = self._capture
+        self._capture = cv2.VideoCapture(self.camera_device_port)
+        
+        if not self._capture.isOpened():
+            print("ERROR: Cannot open camera")
+            self._capture = temp_cap
+            exit()
+            return False
+        self._stream_opened = True
+        return True
+    
+    
+    def close_camera_stream(self)->bool:
+        """closes camera stream.
+
+        Returns:
+            bool: _True, if successful. False, otherwise.
+        """
+        self._capture.release()
+        return True
+        
+    
+    def get_image_camera(self)->cv2.typing.MatLike:
+        """get image/frame of camera and returns it.
+
+        Returns:
+            cv2.typing.MatLike: Image of camera. None, oterwise. 
+        """
+        if not self._stream_opened:
+            self.open_camera_stream()
+        
+        retrived, frame = self._capture.read()
+        if not retrived:
+            print("ERROR: Can't receive frame (stream end?). Exiting ...")
+            self._stream_opened = False
+            return None
+        
+        return frame
+        
+
+    
+
+
+
+        
+
+    
+
+def main():
+    cam_op = CameraOperator()
+    #cam_op.select_camera_device()
+    cam_op.open_camera_stream()
+    images = []
+    for i in range(0,10):
+        image = cam_op.get_image_camera()
+        images.append(image)
+        cv2.imshow(f"{i}) q:close windows", image)
+        cv2.waitKey(100)
+    if cv2.waitKey(0) == ord('q'):
+        cam_op.close_camera_stream
+    print(images)
+    
+    
+    
+if __name__ == "__main__":
+    main()
