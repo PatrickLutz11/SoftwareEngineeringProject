@@ -31,14 +31,14 @@ class ObjectPatternRecognizerGUI:
             text="CAMERA",
             variable=self.mode,
             value="CAMERA",
-            command=self.update_path_state
+            command=self.update_button_state
         ).pack(side=tk.LEFT, padx=5, pady=5)
         ttk.Radiobutton(
             mode_frame,
             text="IMAGE",
             variable=self.mode,
             value="IMAGE",
-            command=self.update_path_state
+            command=self.update_button_state
         ).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Image path widgets (only shown in IMAGE mode)
@@ -49,21 +49,19 @@ class ObjectPatternRecognizerGUI:
         self.browse_button = ttk.Button(self.path_frame, text="Browse", command=self.browse_image)
         self.browse_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-        # Start and Stop buttons
+        # Buttons
         button_frame = ttk.Frame(master)
         button_frame.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
-        self.start_button = ttk.Button(button_frame, text="Start Detection", command=self.start_detection)
-        self.start_button.pack(side=tk.LEFT, padx=5)
-        self.stop_button = ttk.Button(button_frame, text="Stop Detection", command=self.stop_detection, state=tk.DISABLED)
-        self.stop_button.pack(side=tk.LEFT, padx=5)
+        self.toggle_button = ttk.Button(button_frame, text="Start Detection", command=self.toggle_detection)
+        self.toggle_button.pack(side=tk.LEFT, padx=5)
 
         # Navigation buttons (initially hidden)
         self.prev_button = ttk.Button(button_frame, text="Previous", command=self.show_previous_image)
         self.next_button = ttk.Button(button_frame, text="Next", command=self.show_next_image)
         self.prev_button.pack(side=tk.LEFT, padx=5)
         self.next_button.pack(side=tk.LEFT, padx=5)
-        self.prev_button.pack_forget()  # Initially hidden
-        self.next_button.pack_forget()  # Initially hidden
+        self.prev_button.pack_forget()
+        self.next_button.pack_forget()
 
         # Image label to show current image name
         self.image_name_label = ttk.Label(master, text="", anchor="center")
@@ -91,8 +89,8 @@ class ObjectPatternRecognizerGUI:
         self.canvas.configure(yscrollcommand=self.v_scrollbar.set, xscrollcommand=self.h_scrollbar.set)
 
         self.controller: Optional[DetectionController] = None
-        self.original_img_pil_list: list[tuple[Image.Image, str]] = []  # List to hold all images with paths
-        self.current_image_index: int = 0  # Index to track the current image
+        self.original_img_pil_list: list[tuple[Image.Image, str]] = []
+        self.current_image_index: int = 0
 
         # Initialize the state of path widgets
         self.update_path_state()
@@ -100,48 +98,77 @@ class ObjectPatternRecognizerGUI:
         # Bind the configure event to handle window resizing
         self.master.bind('<Configure>', self.on_window_resize)
 
-    def update_path_state(self) -> None:
-        mode = self.mode.get()
-        if mode == "IMAGE":
+    def update_button_state(self) -> None:
+        if self.mode.get() == "IMAGE":
             self.path_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
             self.path_frame.columnconfigure(0, weight=1)
+            self.toggle_button.config(text="Start Detection")
+            self.toggle_button.state(['!disabled'])
         else:
             self.path_frame.grid_remove()
             self.image_path.set("")
+            self.toggle_button.config(text="Start Detection")
+            self.toggle_button.state(['!disabled'])
 
     def browse_image(self) -> None:
         filepath = filedialog.askdirectory(title='Select Image Folder')
         if filepath:
             self.image_path.set(filepath)
 
-    def start_detection(self) -> None:
+    def toggle_detection(self) -> None:
         if not self.controller or not self.controller.running:
-            self.controller = DetectionController(
-                mode=self.mode,
-                image_path=self.image_path,
-                show_image_callback=self.collect_images,  # Collect images for navigation
-                update_status_callback=self.update_status
-            )
-            self.controller.start_detection()
-            self.start_button.config(state=tk.DISABLED)
-            self.stop_button.config(state=tk.NORMAL)
+            self.start_detection()
+        else:
+            self.stop_detection()
+
+    def start_detection(self) -> None:
+        if self.mode.get() == "IMAGE" and not self.image_path.get():
+            self.update_status("Please select an image folder.")
+            return
+
+        self.original_img_pil_list.clear()
+        self.current_image_index = 0
+        self.canvas.delete("all")
+        self.image_name_label.config(text="")
+        self.prev_button.pack_forget()
+        self.next_button.pack_forget()
+
+        self.controller = DetectionController(
+            mode=self.mode,
+            image_path=self.image_path,
+            show_image_callback=self.collect_images,
+            update_status_callback=self.update_status
+        )
+        self.controller.start_detection()
+
+        self.toggle_button.config(text="Stop Detection" if self.mode.get() == "CAMERA" else "Start Detection")
+        if self.mode.get() == "IMAGE":
+            self.toggle_button.state(['disabled'])
 
     def stop_detection(self) -> None:
         if self.controller and self.controller.running:
             self.controller.stop_detection()
-            self.stop_button.config(state=tk.DISABLED)
+            self.toggle_button.config(text="Start Detection")
+            self.toggle_button.state(['!disabled'])
+            self.controller = None
 
     def collect_images(self, img: Any, image_path: str = "") -> None:
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        pil_image = Image.fromarray(img_rgb)
-        self.original_img_pil_list.append((pil_image, image_path))
-        if len(self.original_img_pil_list) == 1:
-            self.update_displayed_image()
+        self.master.after(0, self._collect_images, img, image_path)
 
-        # Show navigation buttons only if there are multiple images
-        if len(self.original_img_pil_list) > 1:
-            self.prev_button.pack(side=tk.LEFT, padx=5)
-            self.next_button.pack(side=tk.LEFT, padx=5)
+    def _collect_images(self, img: Any, image_path: str = "") -> None:
+        try:
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            pil_image = Image.fromarray(img_rgb)
+            self.original_img_pil_list.append((pil_image, image_path))
+            if len(self.original_img_pil_list) == 1:
+                self.update_displayed_image()
+
+            if len(self.original_img_pil_list) > 1:
+                self.prev_button.pack(side=tk.LEFT, padx=5)
+                self.next_button.pack(side=tk.LEFT, padx=5)
+        except Exception as e:
+            self.update_status(f"Error in collect_images: {e}")
+            print(f"Error in collect_images: {e}")
 
     def show_previous_image(self) -> None:
         if self.current_image_index > 0:
@@ -181,7 +208,9 @@ class ObjectPatternRecognizerGUI:
         self.update_displayed_image()
 
     def update_status(self, message: str) -> None:
-        self.status_label.config(text=message)
+        self.master.after(0, self.status_label.config, {'text': message})
+        if self.mode.get() == "IMAGE" and ("completed" in message.lower() or "stopped" in message.lower()):
+            self.toggle_button.config(state=['!disabled'])
 
 
 def main() -> None:

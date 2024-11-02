@@ -1,7 +1,6 @@
 import threading
 from typing import Callable, Optional, Any
 
-
 from detection import Detection
 from picture_modifications import PictureModifications
 from logger import Log
@@ -16,10 +15,10 @@ class DetectionController:
         self,
         mode,
         image_path,
-        show_image_callback: Callable[[Any], None],
+        show_image_callback: Callable[[Any, str], None],
         update_status_callback: Callable[[str], None],
-        log_file_path: str = 'log.csv',  # Default path for the log file
-        source_type: str = "c"  # Parameter to select data source
+        log_file_path: str = 'log.csv',
+        source_type: str = "c"
     ) -> None:
         """
         Initializes the controller.
@@ -38,7 +37,8 @@ class DetectionController:
         self.update_status_callback = update_status_callback
         self.running = False
         self.detection_thread: Optional[threading.Thread] = None
-        self.logger = Log(file_path=log_file_path)  # Initialize the logger
+        self.stop_event = threading.Event()
+        self.logger = Log(file_path=log_file_path)
 
         # Initialize DataSelector based on the initial mode
         current_mode = self.mode.get().upper()
@@ -82,10 +82,14 @@ class DetectionController:
         """Stops the ongoing object detection."""
         if self.running:
             self.running = False
+            self.stop_event.set()
             self.update_status_callback("Status: Stopping detection...")
             stream = self.data_selector.get_stream()
             if stream:
                 stream.close_data_stream()
+            if self.detection_thread and self.detection_thread.is_alive():
+                self.detection_thread.join()
+            self.update_status_callback("Status: Detection stopped.")
 
     def run_detection(self) -> None:
         """Performs object detection based on the current mode."""
@@ -117,8 +121,8 @@ class DetectionController:
             mode (str): The current mode ("CAMERA" or "IMAGE").
         """
         self.update_status_callback(f"Status: {mode} detection started.")
-        frame_count = 0  # To keep track of frame numbers
-        while self.running:
+        frame_count = 0
+        while self.running and not self.stop_event.is_set():
             img = stream.get_current_image()
             if img is None:
                 self.update_status_callback("Status: No more images to process.")
@@ -149,15 +153,14 @@ class DetectionController:
                         self.logger.log_data(
                             pattern=pattern,
                             color=color,
-                            frame=frame_count,  # For camera mode
+                            frame=frame_count,
                             confidence=confidence
                         )
                     elif mode == "IMAGE":
-                        image_path = stream.get_current_image_path() if hasattr(stream, 'get_current_image_path') else "N/A"
                         self.logger.log_data(
                             pattern=pattern,
                             color=color,
-                            image_path=image_path,  # For image mode
+                            image_path=image_path if image_path else "N/A",
                             confidence=confidence
                         )
                 except PermissionError as e:
