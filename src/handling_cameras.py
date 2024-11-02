@@ -2,42 +2,6 @@ import numpy as np
 import cv2
 from typing import List, Tuple
 
-class CameraSearch:
-    @staticmethod
-    def list_camera_devices()->List[int]:
-        """checks system for avaiable and working device ports.
-
-        Returns:
-            List: list of avaiable ports (integer). Empty, otherwise.
-        """
-        # Source code: https://stackoverflow.com/questions/57577445/list-available-cameras-opencv-python
-        is_working = True
-        device_port = 0
-        working_ports = []
-        available_ports = []
-        
-        print("searching for avaiable camera devices...")
-        while is_working:
-            camera = cv2.VideoCapture(device_port)
-            if not camera.isOpened():
-                is_working = False
-                print("Port %s is not working." %device_port)
-                camera.release()
-                
-            else:
-                is_reading, img = camera.read()
-                width_camera = camera.get(3)
-                height_camera = camera.get(4)
-                
-                if is_reading:
-                    print("Port %s is working and reads images (%s x %s)" %(device_port,height_camera,width_camera))
-                    working_ports.append(device_port)
-                else:
-                    print("Port %s for camera ( %s x %s) is present but does not reads." %(device_port,height_camera,width_camera))
-                    available_ports.append(device_port)
-            device_port +=1
-        return working_ports
-
 
 
 class CameraOperator:
@@ -58,7 +22,7 @@ class CameraOperator:
             bool: True, if successful. False, otherwise.
         """
         msg_not_found_port = f"Port could not be found. Port %s remains." %(self.camera_device_port)
-        working_device_ports = CameraSearch().list_camera_devices()
+        working_device_ports = CameraDeviceSearch().list_camera_devices()
         if len(working_device_ports) == 0:
             print("ERROR: No avaiable camera device detected.")
             self._camera_available = False
@@ -94,7 +58,7 @@ class CameraOperator:
         """opens camera stream.
 
         Returns:
-            bool: _True, if successful. False, otherwise.
+            bool: True, if successful. False, otherwise.
         """
         temp_cap = self._capture
         self._capture = cv2.VideoCapture(self.camera_device_port)
@@ -112,7 +76,7 @@ class CameraOperator:
         """closes camera stream.
 
         Returns:
-            bool: _True, if successful. False, otherwise.
+            bool: True, if successful. False, otherwise.
         """
         self._capture.release()
         return True
@@ -134,8 +98,43 @@ class CameraOperator:
             return None
         
         return frame
-        
 
+    
+class CameraDeviceSearch:
+    @staticmethod
+    def list_camera_devices()->List[int]:
+        """checks system for available and working device ports.
+
+        Returns:
+            List[int]: list of available device ports. Empty, otherwise.
+        """
+        # Source code: https://stackoverflow.com/questions/57577445/list-available-cameras-opencv-python
+        is_working = True
+        device_port = 0
+        working_ports = []
+        available_ports = []
+        
+        print("searching for avaiable camera devices...")
+        while is_working:
+            camera = cv2.VideoCapture(device_port)
+            if not camera.isOpened():
+                is_working = False
+                print("Port %s is not working." %device_port)
+                camera.release()
+                
+            else:
+                is_reading, img = camera.read()
+                width_camera = camera.get(3)
+                height_camera = camera.get(4)
+                
+                if is_reading:
+                    print("Port %s is working and reads images (%s x %s)" %(device_port,height_camera,width_camera))
+                    working_ports.append(device_port)
+                else:
+                    print("Port %s for camera ( %s x %s) is present but does not reads." %(device_port,height_camera,width_camera))
+                    available_ports.append(device_port)
+            device_port +=1
+        return working_ports
     
 
 
