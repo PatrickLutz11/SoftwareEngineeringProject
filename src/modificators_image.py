@@ -2,7 +2,7 @@ import cv2
 
 class PictureModifications:
     
-    def resize_the_picture(img) -> cv2.typing.MatLike:
+    def resize_the_picture(img:cv2.typing.MatLike) -> cv2.typing.MatLike:
         """Scaling the picture to a suitable size
 
         Args:

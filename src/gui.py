@@ -1,241 +1,353 @@
-import tkinter as tk
-from tkinter import ttk, filedialog
-import threading
-import cv2
-import sys
+"""GUI module for the Object Pattern Recognizer application."""
+
 import os
+import tkinter as tk
+from tkinter import filedialog, ttk
+from typing import Any, List, Optional, Tuple
 
-# Add the path to your modules
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
-
-from Detection import *
-from PictureModifications import *
-
-# Import Image and ImageTk at the top
+import cv2
 from PIL import Image, ImageTk
 
+from controller import DetectionController
+
+
 class ObjectPatternRecognizerGUI:
-    def __init__(self, master):
+    """GUI class for the Object Pattern Recognizer application.
+    
+    This class implements the graphical user interface for the object pattern
+    recognition application. It provides controls for switching between camera and
+    image modes, starting/stopping detection, and displaying detected patterns.
+
+    Attributes:
+        master: The root tkinter window.
+        mode: StringVar controlling camera/image mode selection.
+        image_path: StringVar storing the selected image folder path.
+        controller: DetectionController instance managing the detection process.
+        original_img_pil_list: List of processed images and their paths.
+        current_image_index: Index of currently displayed image.
+    """
+
+    def __init__(self, master: tk.Tk) -> None:
+        """Initialize the GUI.
+
+        Args:
+            master: The root tkinter window.
+        """
         self.master = master
         self.master.title("Object Pattern Recognizer")
 
         # Configure grid layout
-        self.master.rowconfigure(4, weight=1)  # Row 4 (image display area) expands
-        self.master.columnconfigure(0, weight=1)  # Column 0 expands
+        self.master.rowconfigure(5, weight=1)
+        self.master.columnconfigure(0, weight=1)
 
-        # Mode selection (CAMERA or IMAGE)
+        # Initialize instance variables
         self.mode = tk.StringVar(value="CAMERA")
-        mode_frame = ttk.LabelFrame(master, text="Mode")
+        self.image_path = tk.StringVar()
+        self.controller: Optional[DetectionController] = None
+        self.original_img_pil_list: List[Tuple[Image.Image, str]] = []
+        self.current_image_index: int = 0
+        self.img_tk: Optional[ImageTk.PhotoImage] = None
+
+        self._create_mode_frame()
+        self._create_path_frame()
+        self._create_button_frame()
+        self._create_labels()
+        self._create_image_frame()
+        
+        # Initialize widget states
+        self.update_button_state()
+        
+        # Bind window resize event
+        self.master.bind('<Configure>', self.on_window_resize)
+
+    def _create_mode_frame(self) -> None:
+        """Create the mode selection frame."""
+        mode_frame = ttk.LabelFrame(self.master, text="Mode")
         mode_frame.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
 
-        # Radiobuttons to select mode
-        ttk.Radiobutton(mode_frame, text="CAMERA", variable=self.mode, value="CAMERA",
-                        command=self.update_path_state).pack(side=tk.LEFT, padx=5, pady=5)
-        ttk.Radiobutton(mode_frame, text="IMAGE", variable=self.mode, value="IMAGE",
-                        command=self.update_path_state).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Radiobutton(
+            mode_frame,
+            text="CAMERA",
+            variable=self.mode,
+            value="CAMERA",
+            command=self.update_button_state
+        ).pack(side=tk.LEFT, padx=5, pady=5)
 
-        # Image path widgets (only shown in IMAGE mode)
-        self.image_path = tk.StringVar()
-        self.path_frame = ttk.LabelFrame(master, text="Image Path")
-        self.path_entry = ttk.Entry(self.path_frame, textvariable=self.image_path)
+        ttk.Radiobutton(
+            mode_frame,
+            text="IMAGE",
+            variable=self.mode,
+            value="IMAGE",
+            command=self.update_button_state
+        ).pack(side=tk.LEFT, padx=5, pady=5)
+
+    def _create_path_frame(self) -> None:
+        """Create the image path selection frame."""
+        self.path_frame = ttk.LabelFrame(self.master, text="Image Path")
+        self.path_entry = ttk.Entry(
+            self.path_frame,
+            textvariable=self.image_path
+        )
         self.path_entry.pack(side=tk.LEFT, expand=True, fill="x", padx=5, pady=5)
-        self.browse_button = ttk.Button(self.path_frame, text="Browse", command=self.browse_image)
+        
+        self.browse_button = ttk.Button(
+            self.path_frame,
+            text="Browse",
+            command=self.browse_image
+        )
         self.browse_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-        # Start and Stop buttons
-        button_frame = ttk.Frame(master)
+    def _create_button_frame(self) -> None:
+        """Create the frame containing control buttons."""
+        button_frame = ttk.Frame(self.master)
         button_frame.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
-        self.start_button = ttk.Button(button_frame, text="Start Detection", command=self.start_detection)
-        self.start_button.pack(side=tk.LEFT, padx=5)
-        self.stop_button = ttk.Button(button_frame, text="Stop Detection", command=self.stop_detection,
-                                      state=tk.DISABLED)
-        self.stop_button.pack(side=tk.LEFT, padx=5)
 
-        # Status label
-        self.status_label = ttk.Label(master, text="Status: Ready")
-        self.status_label.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
+        self.toggle_button = ttk.Button(
+            button_frame,
+            text="Start Detection",
+            command=self.toggle_detection
+        )
+        self.toggle_button.pack(side=tk.LEFT, padx=5)
 
-        # Frame to display images
-        self.image_frame = ttk.Frame(master)
-        self.image_frame.grid(row=4, column=0, sticky="nsew")
+        # Navigation buttons (initially hidden)
+        self.prev_button = ttk.Button(
+            button_frame,
+            text="Previous",
+            command=self.show_previous_image
+        )
+        self.next_button = ttk.Button(
+            button_frame,
+            text="Next",
+            command=self.show_next_image
+        )
+
+    def _create_labels(self) -> None:
+        """Create status and image name labels."""
+        self.image_name_label = ttk.Label(
+            self.master,
+            text="",
+            anchor="center"
+        )
+        self.image_name_label.grid(
+            row=3,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+        self.status_label = ttk.Label(
+            self.master,
+            text="Status: Ready"
+        )
+        self.status_label.grid(
+            row=4,
+            column=0,
+            padx=10,
+            pady=5,
+            sticky="ew"
+        )
+
+    def _create_image_frame(self) -> None:
+        """Create the frame for displaying images."""
+        self.image_frame = ttk.Frame(self.master)
+        self.image_frame.grid(row=5, column=0, sticky="nsew")
         self.image_frame.rowconfigure(0, weight=1)
         self.image_frame.columnconfigure(0, weight=1)
 
-        # Canvas to display images
         self.canvas = tk.Canvas(self.image_frame, bg="grey")
         self.canvas.grid(row=0, column=0, sticky="nsew")
 
-        # Add scrollbars to the canvas
-        self.v_scrollbar = ttk.Scrollbar(self.image_frame, orient=tk.VERTICAL, command=self.canvas.yview)
+        # Add scrollbars
+        self.v_scrollbar = ttk.Scrollbar(
+            self.image_frame,
+            orient=tk.VERTICAL,
+            command=self.canvas.yview
+        )
         self.v_scrollbar.grid(row=0, column=1, sticky='ns')
-        self.h_scrollbar = ttk.Scrollbar(self.image_frame, orient=tk.HORIZONTAL, command=self.canvas.xview)
+
+        self.h_scrollbar = ttk.Scrollbar(
+            self.image_frame,
+            orient=tk.HORIZONTAL,
+            command=self.canvas.xview
+        )
         self.h_scrollbar.grid(row=1, column=0, sticky='ew')
-        self.canvas.configure(yscrollcommand=self.v_scrollbar.set, xscrollcommand=self.h_scrollbar.set)
 
-        self.detection_thread = None
-        self.running = False
+        self.canvas.configure(
+            yscrollcommand=self.v_scrollbar.set,
+            xscrollcommand=self.h_scrollbar.set
+        )
 
-        # Initialize the state of path widgets
-        self.update_path_state()
-
-        # Initialize variable to store the original image
-        self.original_img_pil = None
-
-        # Bind the configure event to handle window resizing
-        self.master.bind('<Configure>', self.on_window_resize)
-
-    def update_path_state(self):
-        mode = self.mode.get()
-        if mode == "IMAGE":
-            # Show the path widgets
+    def update_button_state(self) -> None:
+        """Update widget states based on current mode."""
+        if self.mode.get() == "IMAGE":
             self.path_frame.grid(row=1, column=0, padx=10, pady=5, sticky="ew")
             self.path_frame.columnconfigure(0, weight=1)
         else:
-            # Hide the path widgets and clear the path
             self.path_frame.grid_remove()
             self.image_path.set("")
+        
+        self.toggle_button.config(text="Start Detection")
+        self.toggle_button.state(['!disabled'])
 
-    def browse_image(self):
-        filetypes = (('Image files', '*.png;*.jpg;*.jpeg;*.bmp;*.tiff;*.gif'),
-                     ('All files', '*.*'))
-        filepath = filedialog.askopenfilename(title='Select Image', filetypes=filetypes)
+    def browse_image(self) -> None:
+        """Open file dialog for selecting image folder."""
+        filepath = filedialog.askdirectory(title='Select Image Folder')
         if filepath:
             self.image_path.set(filepath)
 
-    def start_detection(self):
-        if not self.running:
-            self.running = True
-            self.start_button.config(state=tk.DISABLED)
-            self.stop_button.config(state=tk.NORMAL)
-            self.status_label.config(text="Status: Detection running...")
-            self.detection_thread = threading.Thread(target=self.run_detection)
-            self.detection_thread.start()
+    def toggle_detection(self) -> None:
+        """Toggle detection process on/off."""
+        if not self.controller or not self.controller.running:
+            self.start_detection()
+        else:
+            self.stop_detection()
 
-    def stop_detection(self):
-        if self.running:
-            self.running = False
-            self.status_label.config(text="Status: Stopping detection...")
-
-    def run_detection(self):
-        mode = self.mode.get()
-        if mode == "CAMERA":
-            self.detect_from_camera()
-        elif mode == "IMAGE":
-            image_path = self.image_path.get()
-            if image_path:
-                self.detect_from_image(image_path)
-            else:
-                self.update_status("Status: Please provide a valid image path.")
-                self.running = False
-                self.master.after(0, self.start_button.config, {'state': tk.NORMAL})
-                self.master.after(0, self.stop_button.config, {'state': tk.DISABLED})
-                return
-        self.running = False
-        self.master.after(0, self.start_button.config, {'state': tk.NORMAL})
-        self.master.after(0, self.stop_button.config, {'state': tk.DISABLED})
-
-    def detect_from_camera(self):
-        try:
-            cap = cv2.VideoCapture(0)
-            if not cap.isOpened():
-                self.update_status("Error: Cannot open camera.")
-                self.running = False
-                return
-            while self.running:
-                ret, img = cap.read()
-                if not ret:
-                    break
-
-                # Perform shape detection and recognition
-                searching_for_shapes = Detection.shape_detection(img)
-                Detection.shape_recognition(searching_for_shapes, img)
-
-                # Resize image
-                img = PictureModifications.resize_the_picture(img)
-
-                # Schedule GUI update in the main thread
-                self.master.after(0, self.show_image_in_gui, img)
-
-            cap.release()
-            if self.running:
-                self.update_status("Status: Camera detection completed.")
-            else:
-                self.update_status("Status: Camera detection stopped.")
-        except Exception as e:
-            self.update_status(f"Error: {e}")
-            self.running = False
-
-    def detect_from_image(self, image_path):
-        try:
-            if not os.path.isfile(image_path):
-                self.update_status(f"Error: File {image_path} does not exist.")
-                self.running = False
-                return
-
-            img = cv2.imread(image_path)
-            if img is None:
-                self.update_status(f"Error: Cannot load image from {image_path}")
-                self.running = False
-                return
-
-            # Perform shape detection and recognition
-            searching_for_shapes = Detection.shape_detection(img)
-            Detection.shape_recognition(searching_for_shapes, img)
-
-            # Resize image
-            img = PictureModifications.resize_the_picture(img)
-
-            # Schedule GUI update in the main thread
-            self.master.after(0, self.show_image_in_gui, img)
-
-            self.update_status("Status: Image detection completed.")
-        except Exception as e:
-            self.update_status(f"Error: {e}")
-            self.running = False
-
-    def show_image_in_gui(self, img):
-        # Convert image to RGB and then to PIL format
-        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        self.original_img_pil = Image.fromarray(img_rgb)
-
-        # Resize and display the image
-        self.update_displayed_image()
-
-    def update_displayed_image(self):
-        if self.original_img_pil is None:
+    def start_detection(self) -> None:
+        """Start the detection process."""
+        if self.mode.get() == "IMAGE" and not self.image_path.get():
+            self.update_status("Please select an image folder.")
             return
 
-        # Get canvas size
+        # Reset GUI state
+        self.original_img_pil_list.clear()
+        self.current_image_index = 0
+        self.canvas.delete("all")
+        self.image_name_label.config(text="")
+        self.prev_button.pack_forget()
+        self.next_button.pack_forget()
+
+        # Initialize and start controller
+        self.controller = DetectionController(
+            mode=self.mode,
+            image_path=self.image_path,
+            show_image_callback=self.collect_images,
+            update_status_callback=self.update_status
+        )
+        self.controller.start_detection()
+
+        # Update button states
+        self.toggle_button.config(text="Stop Detection")
+        if self.mode.get() == "IMAGE":
+            self.toggle_button.state(['disabled'])
+
+    def stop_detection(self) -> None:
+        """Stop the detection process."""
+        if self.controller and self.controller.running:
+            self.controller.stop_detection()
+            self.toggle_button.config(text="Start Detection")
+            self.toggle_button.state(['!disabled'])
+            self.controller = None
+
+    def collect_images(self, img: Any, image_path: str = "") -> None:
+        """Queue image collection for GUI thread.
+
+        Args:
+            img: The image to be collected.
+            image_path: Path of the image file.
+        """
+        self.master.after(0, self._collect_images, img, image_path)
+
+    def _collect_images(self, img: Any, image_path: str = "") -> None:
+        """Process and store collected images.
+
+        Args:
+            img: The image to be processed.
+            image_path: Path of the image file.
+        """
+        try:
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            pil_image = Image.fromarray(img_rgb)
+            self.original_img_pil_list.append((pil_image, image_path))
+            
+            # Show navigation buttons if we have multiple images
+            if len(self.original_img_pil_list) > 1:
+                self.prev_button.pack(side=tk.LEFT, padx=5)
+                self.next_button.pack(side=tk.LEFT, padx=5)
+            
+            # Update display for first image or if viewing latest
+            if (len(self.original_img_pil_list) == 1 or 
+                self.current_image_index == len(self.original_img_pil_list) - 2):
+                self.current_image_index = len(self.original_img_pil_list) - 1
+                self.update_displayed_image()
+
+        except Exception as e:
+            self.update_status(f"Error in collect_images: {e}")
+            print(f"Error in collect_images: {e}")
+
+    def show_previous_image(self) -> None:
+        """Display the previous image in the list."""
+        if self.current_image_index > 0:
+            self.current_image_index -= 1
+            self.update_displayed_image()
+
+    def show_next_image(self) -> None:
+        """Display the next image in the list."""
+        if self.current_image_index < len(self.original_img_pil_list) - 1:
+            self.current_image_index += 1
+            self.update_displayed_image()
+
+    def update_displayed_image(self) -> None:
+        """Update the image display and counter."""
+        if not self.original_img_pil_list:
+            return
+        if self.current_image_index >= len(self.original_img_pil_list):
+            return
+
+        image_to_show, image_path = self.original_img_pil_list[
+            self.current_image_index
+        ]
+        total_images = len(self.original_img_pil_list)
+        
+        # Update image name and counter
+        image_name = (os.path.basename(image_path) if image_path 
+                     else f"Image {self.current_image_index + 1}")
+        counter_text = (f"Current Image: {image_name} "
+                       f"({self.current_image_index + 1}/{total_images})")
+        self.image_name_label.config(text=counter_text)
+
+        # Check canvas initialization
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
-
         if canvas_width <= 1 or canvas_height <= 1:
-            # Canvas not yet properly sized
             self.master.after(100, self.update_displayed_image)
             return
 
-        # Resize image while maintaining aspect ratio
-        img_width, img_height = self.original_img_pil.size
+        # Calculate new image size
+        img_width, img_height = image_to_show.size
         ratio = min(canvas_width / img_width, canvas_height / img_height)
         new_size = (int(img_width * ratio), int(img_height * ratio))
 
-        resized_img = self.original_img_pil.resize(new_size, Image.ANTIALIAS)
-
-        # Convert to PhotoImage and display
+        # Update canvas
+        resized_img = image_to_show.resize(new_size, Image.Resampling.LANCZOS)
         self.img_tk = ImageTk.PhotoImage(resized_img)
         self.canvas.delete("all")
         self.canvas.create_image(0, 0, anchor=tk.NW, image=self.img_tk)
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
-    def on_window_resize(self, event):
-        # Update the displayed image when the window is resized
+    def on_window_resize(self, event: tk.Event) -> None:
+        """Handle window resize events.
+
+        Args:
+            event: The resize event.
+        """
         self.update_displayed_image()
 
-    def update_status(self, message):
-        # Schedule status update in the main thread
-        self.master.after(0, self.status_label.config, {'text': message})
+    def update_status(self, message: str) -> None:
+        """Update the status label text.
+
+        Args:
+            message: The status message to display.
+        """
+        self.status_label.config(text=message)
+
+        # Re-enable toggle button when detection is completed or stopped
+        if any(keyword in message.lower() for keyword in ["completed", "stopped"]):
+            self.toggle_button.config(text="Start Detection")
+            self.toggle_button.state(['!disabled'])
+
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = ObjectPatternRecognizerGUI(root)
+    app = ObjectPatternRecognizerGUI(master=root)
     root.mainloop()

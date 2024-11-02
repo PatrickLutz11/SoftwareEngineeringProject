@@ -7,13 +7,17 @@ from typing import List, Tuple
 
 
 class PathHandling():
-    def __init__(self, _path_rel_in: str="in", _path_rel_out: str="out",) -> None:
-        self.path_rel_in = _path_rel_in
-        self.path_rel_out = _path_rel_out
+    def __init__(self, _path_abs_in: str="", ) -> None:
+        self.path_rel_in = "in"
+        self.path_rel_out = "out"
+        
         self.path_abs_parent = ""
         self.path_abs_in = ""
         self.path_abs_out = ""
-        
+
+        if (len(_path_abs_in)>0) and self.check_path_validity(_path_abs_in):
+            self.path_abs_in = _path_abs_in
+
         
     def get_path_abs_parent(self) -> str:
         """get parent folder as absolute path
