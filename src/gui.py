@@ -8,8 +8,8 @@ import os
 # Add the path to your modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
-from Detection import *
-from PictureModifications import *
+from shape_detection import *
+from modificators_image import *
 
 # Import Image and ImageTk at the top
 from PIL import Image, ImageTk
