@@ -4,29 +4,27 @@ from tkinter import filedialog, ttk
 from typing import Any, Optional
 
 import cv2
-
 from PIL import Image, ImageTk
 
 from controller import DetectionController
 
-
 class ObjectPatternRecognizerGUI:
-    """GUI for the Object Pattern Recognizer application."""
+    """GUI für die Object Pattern Recognizer Anwendung."""
 
     def __init__(self, master: tk.Tk) -> None:
         self.master = master
         self.master.title("Object Pattern Recognizer")
 
-        # Configure grid layout
+        # Grid-Layout konfigurieren
         self.master.rowconfigure(5, weight=1)
         self.master.columnconfigure(0, weight=1)
 
-        # Mode selection (CAMERA or IMAGE)
+        # Modus-Auswahl (CAMERA oder IMAGE)
         self.mode = tk.StringVar(value="CAMERA")
-        mode_frame = ttk.LabelFrame(master, text="Mode")
+        mode_frame = ttk.LabelFrame(master, text="Modus")
         mode_frame.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
 
-        # Radiobuttons to select mode
+        # Radiobuttons zur Modus-Auswahl
         ttk.Radiobutton(
             mode_frame,
             text="CAMERA",
@@ -42,12 +40,12 @@ class ObjectPatternRecognizerGUI:
             command=self.update_button_state
         ).pack(side=tk.LEFT, padx=5, pady=5)
 
-        # Image path widgets (only shown in IMAGE mode)
+        # Bildpfad-Widgets (nur im IMAGE-Modus sichtbar)
         self.image_path = tk.StringVar()
-        self.path_frame = ttk.LabelFrame(master, text="Image Path")
+        self.path_frame = ttk.LabelFrame(master, text="Bildpfad")
         self.path_entry = ttk.Entry(self.path_frame, textvariable=self.image_path)
         self.path_entry.pack(side=tk.LEFT, expand=True, fill="x", padx=5, pady=5)
-        self.browse_button = ttk.Button(self.path_frame, text="Browse", command=self.browse_image)
+        self.browse_button = ttk.Button(self.path_frame, text="Durchsuchen", command=self.browse_image)
         self.browse_button.pack(side=tk.LEFT, padx=5, pady=5)
 
         # Buttons
@@ -56,33 +54,33 @@ class ObjectPatternRecognizerGUI:
         self.toggle_button = ttk.Button(button_frame, text="Start Detection", command=self.toggle_detection)
         self.toggle_button.pack(side=tk.LEFT, padx=5)
 
-        # Navigation buttons (initially hidden)
-        self.prev_button = ttk.Button(button_frame, text="Previous", command=self.show_previous_image)
-        self.next_button = ttk.Button(button_frame, text="Next", command=self.show_next_image)
+        # Navigationsbuttons (initial versteckt)
+        self.prev_button = ttk.Button(button_frame, text="Vorheriges", command=self.show_previous_image)
+        self.next_button = ttk.Button(button_frame, text="Nächstes", command=self.show_next_image)
         self.prev_button.pack(side=tk.LEFT, padx=5)
         self.next_button.pack(side=tk.LEFT, padx=5)
         self.prev_button.pack_forget()
         self.next_button.pack_forget()
 
-        # Image label to show current image name
+        # Bildnamen-Label
         self.image_name_label = ttk.Label(master, text="", anchor="center")
         self.image_name_label.grid(row=3, column=0, padx=10, pady=5, sticky="ew")
 
-        # Status label
-        self.status_label = ttk.Label(master, text="Status: Ready")
+        # Status-Label
+        self.status_label = ttk.Label(master, text="Status: Bereit")
         self.status_label.grid(row=4, column=0, padx=10, pady=5, sticky="ew")
 
-        # Frame to display images
+        # Rahmen zur Anzeige von Bildern
         self.image_frame = ttk.Frame(master)
         self.image_frame.grid(row=5, column=0, sticky="nsew")
         self.image_frame.rowconfigure(0, weight=1)
         self.image_frame.columnconfigure(0, weight=1)
 
-        # Canvas to display images
+        # Canvas zur Anzeige von Bildern
         self.canvas = tk.Canvas(self.image_frame, bg="grey")
         self.canvas.grid(row=0, column=0, sticky="nsew")
 
-        # Add scrollbars to the canvas
+        # Scrollbars zum Canvas hinzufügen
         self.v_scrollbar = ttk.Scrollbar(self.image_frame, orient=tk.VERTICAL, command=self.canvas.yview)
         self.v_scrollbar.grid(row=0, column=1, sticky='ns')
         self.h_scrollbar = ttk.Scrollbar(self.image_frame, orient=tk.HORIZONTAL, command=self.canvas.xview)
@@ -93,10 +91,10 @@ class ObjectPatternRecognizerGUI:
         self.original_img_pil_list: list[tuple[Image.Image, str]] = []
         self.current_image_index: int = 0
 
-        # Initialize the state of path widgets
-        self.update_path_state()
+        # Initialisierung des Zustands der Pfad-Widgets
+        self.update_button_state()
 
-        # Bind the configure event to handle window resizing
+        # Binde das Konfigurationsereignis, um die Fenstergröße zu handhaben
         self.master.bind('<Configure>', self.on_window_resize)
 
     def update_button_state(self) -> None:
@@ -112,7 +110,7 @@ class ObjectPatternRecognizerGUI:
             self.toggle_button.state(['!disabled'])
 
     def browse_image(self) -> None:
-        filepath = filedialog.askdirectory(title='Select Image Folder')
+        filepath = filedialog.askdirectory(title='Bildordner auswählen')
         if filepath:
             self.image_path.set(filepath)
 
@@ -124,7 +122,7 @@ class ObjectPatternRecognizerGUI:
 
     def start_detection(self) -> None:
         if self.mode.get() == "IMAGE" and not self.image_path.get():
-            self.update_status("Please select an image folder.")
+            self.update_status("Bitte wähle einen Bildordner aus.")
             return
 
         self.original_img_pil_list.clear()
@@ -142,7 +140,7 @@ class ObjectPatternRecognizerGUI:
         )
         self.controller.start_detection()
 
-        self.toggle_button.config(text="Stop Detection" if self.mode.get() == "CAMERA" else "Start Detection")
+        self.toggle_button.config(text="Stop Detection")
         if self.mode.get() == "IMAGE":
             self.toggle_button.state(['disabled'])
 
@@ -168,8 +166,8 @@ class ObjectPatternRecognizerGUI:
                 self.prev_button.pack(side=tk.LEFT, padx=5)
                 self.next_button.pack(side=tk.LEFT, padx=5)
         except Exception as e:
-            self.update_status(f"Error in collect_images: {e}")
-            print(f"Error in collect_images: {e}")
+            self.update_status(f"Fehler in collect_images: {e}")
+            print(f"Fehler in collect_images: {e}")
 
     def show_previous_image(self) -> None:
         if self.current_image_index > 0:
@@ -186,8 +184,8 @@ class ObjectPatternRecognizerGUI:
             return
 
         image_to_show, image_path = self.original_img_pil_list[self.current_image_index]
-        image_name = os.path.basename(image_path) if image_path else f"Image {self.current_image_index + 1}"
-        self.image_name_label.config(text=f"Current Image: {image_name} ({self.current_image_index + 1}/{len(self.original_img_pil_list)})")
+        image_name = os.path.basename(image_path) if image_path else f"Bild {self.current_image_index + 1}"
+        self.image_name_label.config(text=f"Aktuelles Bild: {image_name} ({self.current_image_index + 1}/{len(self.original_img_pil_list)})")
 
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
@@ -199,7 +197,8 @@ class ObjectPatternRecognizerGUI:
         ratio = min(canvas_width / img_width, canvas_height / img_height)
         new_size = (int(img_width * ratio), int(img_height * ratio))
 
-        resized_img = image_to_show.resize(new_size, Image.ANTIALIAS)
+        # Verwende das aktualisierte Resampling-Verfahren
+        resized_img = image_to_show.resize(new_size, Image.Resampling.LANCZOS)
         self.img_tk = ImageTk.PhotoImage(resized_img)
         self.canvas.delete("all")
         self.canvas.create_image(0, 0, anchor=tk.NW, image=self.img_tk)
@@ -213,12 +212,10 @@ class ObjectPatternRecognizerGUI:
         if self.mode.get() == "IMAGE" and ("completed" in message.lower() or "stopped" in message.lower()):
             self.toggle_button.config(state=['!disabled'])
 
-
 def main() -> None:
     root = tk.Tk()
     app = ObjectPatternRecognizerGUI(master=root)
     root.mainloop()
-
 
 if __name__ == "__main__":
     main()

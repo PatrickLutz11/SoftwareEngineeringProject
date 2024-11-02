@@ -1,5 +1,4 @@
-import csv
-import os
+
 from datetime import datetime
 from modificators_csv import CSVWriter
 

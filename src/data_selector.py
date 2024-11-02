@@ -2,7 +2,7 @@
 programm to select data channel and get data stream of selected channel.
 """
 
-from data_stream import DataStream, CameraStream, FolderStream
+from data_streams import DataStream, CameraStream, FolderStream
 from typing import Optional
 
 class DataSelector:

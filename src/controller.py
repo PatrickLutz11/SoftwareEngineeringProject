@@ -1,11 +1,11 @@
 import threading
 from typing import Callable, Optional, Any
 
-from detection import Detection
+from shape_detection import Detection
 from picture_modifications import PictureModifications
-from logger import Log
+from logger import Logger
 from data_selector import DataSelector
-from data_stream import DataStream
+from data_streams import DataStream
 
 
 class DetectionController:
@@ -38,7 +38,7 @@ class DetectionController:
         self.running = False
         self.detection_thread: Optional[threading.Thread] = None
         self.stop_event = threading.Event()
-        self.logger = Log(file_path=log_file_path)
+        self.logger = Logger(file_path=log_file_path)
 
         # Initialize DataSelector based on the initial mode
         current_mode = self.mode.get().upper()
@@ -160,7 +160,7 @@ class DetectionController:
                         self.logger.log_data(
                             pattern=pattern,
                             color=color,
-                            image_path=image_path if image_path else "N/A",
+                            #image_path=image_path if image_path else "N/A",
                             confidence=confidence
                         )
                 except PermissionError as e:
