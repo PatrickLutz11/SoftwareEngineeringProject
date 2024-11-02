@@ -1,247 +1,158 @@
-"""Module for detecting and recognizing shapes in images.
-
-This module provides functionality to detect shapes in images and identify their
-patterns and colors using computer vision techniques.
-"""
-
-from typing import Dict, List, Tuple
+"""Module for detecting and recognizing shapes in images."""
 
 import cv2
 import numpy as np
-from numpy.typing import NDArray
-
+from typing import List, Dict
 
 class Detection:
-    """Class for shape detection and recognition in images."""
-
-    # Color recognition thresholds
-    COLOR_RANGES = {
-        "Green": ((80, 140, 60), (150, 190, 140)),
-        "Blue": ((60, 90, 70), (200, 140, 180)),
-        "Red": ((0, 0, 150), (100, 100, 255)),
-        "Orange": ((0, 100, 150), (100, 255, 255)),
-        "Violet": ((100, 0, 100), (255, 100, 255))
-    }
-
-    @staticmethod
-    def shape_detection(
-        img: NDArray, 
-        ratio_image_to_shape: int = 100
-    ) -> List[NDArray]:
-        """Detect shapes in the given image.
+    def shape_detection(img: cv2.typing.MatLike, ratio_image_to_shape: int = 100) -> List:
+        """Shape detection from the image
 
         Args:
-            img: The input image as a numpy array.
-            ratio_image_to_shape: Ratio determining minimum shape size.
-                Defaults to 100.
+            img (cv2.typing.MatLike): The image with shapes
+            ratio_image_to_shape (int): Ratio of image to shape, i.e. 
+                                      how many times the image is bigger 
+                                      than the shape. Defaults to 100.
 
         Returns:
-            List of detected shape contours.
-
-        Raises:
-            ValueError: If the input image is None or empty.
+            List: The shapes within the image
         """
-        if img is None or img.size == 0:
-            raise ValueError("Input image is empty or None")
-
-        # Convert to grayscale and calculate minimum area
-        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
         area_of_img = gray_img.shape[0] * gray_img.shape[1]
-        minimum_area = int(area_of_img / ratio_image_to_shape)
+        miniumum_area_for_shape = int(area_of_img / ratio_image_to_shape)
 
-        # Apply image processing
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
+        
         thresholded = cv2.adaptiveThreshold(
-            blurred, 
-            255, 
-            cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-            cv2.THRESH_BINARY, 
-            11, 
-            2
-        )
-
-        # Find and filter contours
-        contours, _ = cv2.findContours(
-            thresholded,
-            cv2.RETR_TREE,
-            cv2.CHAIN_APPROX_SIMPLE
+            blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
         )
         
-        # Sort contours by area and filter
-        found_shapes = sorted(contours, key=cv2.contourArea, reverse=True)[1:]
-        return [shape for shape in found_shapes 
-                if cv2.contourArea(shape) >= minimum_area]
+        contours, _ = cv2.findContours(thresholded, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        found_shapes = sorted(contours, key=cv2.contourArea, reverse=True)[1:]  # excluding background
+        
+        filtered_found_shapes = []
+        for shape in found_shapes:
+            area = cv2.contourArea(shape)
+            if miniumum_area_for_shape > area:
+                break
+            filtered_found_shapes.append(shape)
+        
+        # Debugging 
+        if False: 
+            cv2.imshow("gray", gray_img)
+            cv2.imshow("blurred", blurred)
+            cv2.imshow("thresholded", thresholded)
+            img_contours = cv2.drawContours(img, filtered_found_shapes, -1, (120, 255, 0), 1)
+            cv2.imshow("Contours", img_contours)
+            print(len(contours))
+            print(len(found_shapes))
+            print(len(filtered_found_shapes))
+        
+        return filtered_found_shapes 
 
-    @staticmethod
-    def shape_recognition(
-        found_shapes: List[NDArray],
-        img: NDArray
-    ) -> List[Dict[str, str]]:
-        """Identify patterns and colors of detected shapes.
+    def shape_recognition(found_shapes: List, img: cv2.typing.MatLike) -> List[Dict[str, str]]:
+        """Identification of found shapes
 
         Args:
-            found_shapes: List of shape contours to analyze.
-            img: Original image containing the shapes.
+            found_shapes (List): List of found shapes within the image
+            img (cv2.typing.MatLike): The image with shapes
 
         Returns:
-            List of dictionaries containing pattern and color information.
-
-        Raises:
-            ValueError: If found_shapes is None or empty.
+            List[Dict[str, str]]: List of recognized shapes with pattern and color
         """
-        if not found_shapes:
-            return []
-
-        recognized_shapes = []
-        for shape in found_shapes[1:]:  # Skip first shape (usually background)
-            try:
-                pattern, confidence = Detection._identify_pattern(shape)
-                color = Detection.get_color(img, shape)
-                
-                if pattern and color:
-                    # Get position for text overlay
-                    x, y = Detection._calculate_text_position(shape)
-                    
-                    # Draw shape and text
-                    Detection._draw_shape_overlay(
-                        img, shape, pattern, color, x, y
-                    )
-                    
-                    recognized_shapes.append({
-                        'pattern': pattern,
-                        'color': color,
-                        'confidence': confidence
-                    })
-            
-            except Exception as e:
-                print(f"Error processing shape: {e}")
+        recognized_shapes = []  # List to store recognized shapes
+        i = 0
+        for shape in found_shapes:
+            if i == 0:
+                i = 1
                 continue
-
+            
+            define_shape = cv2.approxPolyDP(shape, 0.01 * cv2.arcLength(shape, True), True)
+            shape_color = Detection.get_color(img, shape)
+            
+            shape_points = cv2.moments(shape) 
+            if shape_points['m00'] != 0.0: 
+                x = int(shape_points['m10'] / shape_points['m00']) - 100
+                y = int(shape_points['m01'] / shape_points['m00']) 
+             
+            if len(define_shape) == 3:
+                cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
+                cv2.putText(img, f'Triangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                recognized_shapes.append({'pattern': 'Triangle', 'color': shape_color})
+                
+            elif len(define_shape) == 4:
+                (x1, y1, w, h) = cv2.boundingRect(define_shape)
+                aspect_ratio = float(w) / h
+                
+                if 0.95 <= aspect_ratio <= 1.05:
+                    cv2.drawContours(img, [shape], 0, (0, 255, 0), 5)
+                    cv2.putText(img, f'Square, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                    recognized_shapes.append({'pattern': 'Square', 'color': shape_color})
+                else:
+                    cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
+                    cv2.putText(img, f'Rectangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                    recognized_shapes.append({'pattern': 'Rectangle', 'color': shape_color})
+                
+            elif len(define_shape) == 5:
+                cv2.drawContours(img, [shape], 0, (0, 0, 255), 5)
+                cv2.putText(img, f'Pentacle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                recognized_shapes.append({'pattern': 'Pentacle', 'color': shape_color})
+                
+            elif len(define_shape) == 6:
+                cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
+                cv2.putText(img, f'Hexagram, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                recognized_shapes.append({'pattern': 'Hexagram', 'color': shape_color})
+            else:
+                cv2.drawContours(img, [shape], 0, (0, 0, 255), 5)
+                cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
+                recognized_shapes.append({'pattern': 'Circle', 'color': shape_color})
+        
         return recognized_shapes
 
-    @staticmethod
-    def get_color(img: NDArray, shape: NDArray) -> str:
-        """Identify the color of a shape.
+    def get_color(img: cv2.typing.MatLike, shape: List) -> str:
+        """Identifying the color of the found shapes
 
         Args:
-            img: Original image containing the shape.
-            shape: Contour of the shape to analyze.
+            img (cv2.typing.MatLike): The image with shapes
+            shape (List): Shapes found within the image
 
         Returns:
-            Color name as string, empty if unknown.
-        """
-        # Create mask for the shape
+            str: The color of the shape
+        """        
         mask = np.zeros(img.shape[:2], dtype="uint8")
         cv2.drawContours(mask, [shape], -1, 255, -1)
         
-        # Get mean color values
         rgb_values = cv2.mean(img, mask=mask)[:3]
+
+        if 80 < rgb_values[0] < 150 and 140 < rgb_values[1] < 190 and 60 < rgb_values[2] < 140:
+            return "Green"
         
-        # Check each color range
-        for color_name, (lower, upper) in Detection.COLOR_RANGES.items():
-            if all(l < v < u for v, l, u in zip(rgb_values, lower, upper)):
-                return color_name
+        elif 60 < rgb_values[0] < 200 and 90 < rgb_values[1] < 140 and 70 < rgb_values[2] < 180:
+            return "Blue"
         
-        return ""
-
-    @staticmethod
-    def _identify_pattern(shape: NDArray) -> Tuple[str, str]:
-        """Identify the pattern of a shape based on its vertices.
-
-        Args:
-            shape: Contour of the shape to analyze.
-
-        Returns:
-            Tuple of (pattern name, confidence level).
-        """
-        vertices = cv2.approxPolyDP(
-            shape,
-            0.01 * cv2.arcLength(shape, True),
-            True
-        )
-        vertex_count = len(vertices)
-
-        if vertex_count == 3:
-            return 'Triangle', 'High'
+        elif rgb_values[0] < 100 and rgb_values[1] < 100 and rgb_values[2] > 150:
+            return "Red"
         
-        if vertex_count == 4:
-            x, y, w, h = cv2.boundingRect(vertices)
-            aspect_ratio = float(w) / h
-            return ('Square', 'High') if 0.95 <= aspect_ratio <= 1.05 else ('Rectangle', 'High')
+        elif rgb_values[0] < 100 and rgb_values[1] > 100 and 150 < rgb_values[2]:
+            return "Orange"
         
-        if vertex_count == 5:
-            return 'Pentacle', 'High'
+        elif rgb_values[1] < 100 and rgb_values[0] > 100 and rgb_values[2] > 100:
+            return "Violet"
         
-        if vertex_count == 6:
-            return 'Hexagram', 'High'
-        
-        return 'Circle', 'Medium'
-
-    @staticmethod
-    def _calculate_text_position(shape: NDArray) -> Tuple[int, int]:
-        """Calculate position for text overlay on shape.
-
-        Args:
-            shape: Contour of the shape.
-
-        Returns:
-            Tuple of (x, y) coordinates.
-        """
-        moments = cv2.moments(shape)
-        if moments['m00'] != 0.0:
-            x = int(moments['m10'] / moments['m00']) - 100
-            y = int(moments['m01'] / moments['m00'])
-            return x, y
-        return 0, 0
-
-    @staticmethod
-    def _draw_shape_overlay(
-        img: NDArray,
-        shape: NDArray,
-        pattern: str,
-        color: str,
-        x: int,
-        y: int
-    ) -> None:
-        """Draw shape contour and label on image.
-
-        Args:
-            img: Image to draw on.
-            shape: Shape contour to draw.
-            pattern: Pattern name to display.
-            color: Color name to display.
-            x: X-coordinate for text.
-            y: Y-coordinate for text.
-        """
-        cv2.drawContours(img, [shape], 0, (0, 255, 0), 5)
-        cv2.putText(
-            img,
-            f'{pattern}, {color}',
-            (x, y),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            (255, 0, 255),
-            2
-        )
+        else:
+            return ""  # Unknown Color
 
 
 if __name__ == "__main__":
-    # Test code for debugging
-    try:
-        test_img = cv2.imread("in/test_image_03.jpg")
-        if test_img is None:
-            raise ValueError("Could not load test image")
+    """Debugging of functions"""
+    img = cv2.imread(R"in/test_image_03.jpg")  # (R"in/test_image_03.jpg")
+    cv2.imshow("test", img)
+    shapes = Detection.shape_detection(img)
+    print(len(shapes))
 
-        cv2.imshow("Original", test_img)
-        detected_shapes = Detection.shape_detection(test_img)
-        recognized = Detection.shape_recognition(detected_shapes, test_img)
-        
-        print(f"Detected {len(detected_shapes)} shapes")
-        print("Recognized shapes:", recognized)
-        
-        cv2.imshow("Processed", test_img)
-        cv2.waitKey(0)
+    recognized = Detection.shape_recognition(shapes, img)
+    print(f"Recognized shapes: {recognized}")
+    cv2.imshow("newimage", img)
+
+    if cv2.waitKey() == ord('q'):
         cv2.destroyAllWindows()
-
-    except Exception as e:
-        print(f"Error in test code: {e}")
