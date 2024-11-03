@@ -81,47 +81,14 @@ class Detection:
             
             if len(define_shape) == 6:
                 shape_name = "Hexagram"
-            """
-            if len(define_shape) == 3:
-                cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
-                cv2.putText(img, f'Triangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2) 
-                
-            elif len(define_shape) == 4:
-                (x1, y1, w, h) = cv2.boundingRect(define_shape)
-                aspect_ratio = float(w) / h
-                
-                if 0.95 <= aspect_ratio <= 1.05:
-                    cv2.drawContours(img, [shape], 0, (0, 255, 0), 5)
-                    cv2.putText(img, f'Square, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-                else:
-                    cv2.drawContours(img, [shape], 0, (0, 0, 0), 5)
-                    cv2.putText(img, f'Rectangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-                
-            elif len(define_shape) == 5:
-                cv2.drawContours(img, [shape], 0, (0, 0, 255), 5)
-                cv2.putText(img, f'Pentacle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-                
-            elif len(define_shape) == 6:
-                cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
-                cv2.putText(img, f'Hexagram, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-            else:
-                cv2.drawContours(img, [shape], 0, BGR_COLORS["BLACK"], 5)
-                cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-            """
-            x_coord_text, y_coord_text = OperationShapes.get_shape_center(shape)
-            cv2.drawContours(img, [shape], 0, BGR_COLORS["CYAN"], 5)
-            print(shape_name, shape_color, (x_coord_text, y_coord_text))
-            text = f'{shape_name}, {shape_color}'
-            font_face = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 0.8
-            font_color = BGR_COLORS["BLACK"]
-            font_thickness = 2
-
-            text_size, baseline = cv2.getTextSize(text, font_face, font_scale, font_thickness)
-            text_coord = (int(x_coord_text-text_size[0]/2), y_coord_text)
             
-            cv2.putText(img, text, text_coord, 
-                        font_face, font_scale, font_color, font_thickness)
+            
+            cv2.drawContours(img, [shape], 0, BGR_COLORS["CYAN"], 5)
+            
+            text = f'{shape_name}, {shape_color}'
+            coords_text = OperationShapes.get_shape_center(shape)
+            img = TextPlacer.place_text(img, text, coords_text)
+            
             recognized_shapes.append({'pattern': shape_name, 'color': shape_color})
         print(f"\r\n\n")
         return recognized_shapes
@@ -163,6 +130,7 @@ class FilterShapes:
             filtered_found_shapes.append(shape)
         return filtered_found_shapes
 
+
 class OperationShapes:
     @staticmethod
     def get_shape_center(mask_shape:cv2.typing.MatLike)->Tuple[int, int]:
@@ -173,7 +141,27 @@ class OperationShapes:
             x_coord = int(shape_points['m10']/shape_points['m00'])
             y_coord = int(shape_points['m01']/shape_points['m00']) 
         return x_coord, y_coord
-    
+
+
+class TextPlacer:
+    @staticmethod
+    def place_text(img:cv2.typing.MatLike, text:str, 
+                   coords_text:Tuple[int, int])->cv2.typing.MatLike:
+        font = {
+                'face' : cv2.FONT_HERSHEY_SIMPLEX,
+                'scale' : 0.8,
+                'color' : BGR_COLORS["BLACK"],
+                'thickness' : 2
+            }
+        text_size, baseline = cv2.getTextSize(text, font["face"], font["scale"], font["thickness"])
+        x, y = coords_text
+        text_coord = (int(x-text_size[0]/2), y)
+        
+        new_img = cv2.putText(img, text, text_coord, 
+                        font["face"], font["scale"], font["color"], font["thickness"])
+        return new_img
+
+        
 if __name__ == "__main__": 
     """Debugging of functions
     """
