@@ -6,7 +6,7 @@ import numpy as np
 
 from data_selector import DataSelector
 from logger import Logger
-from picture_modifications import PictureModifications
+from modificators_image import PictureModifications
 from detection_shape import Detection
 
 
