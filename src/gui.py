@@ -1,10 +1,9 @@
 """GUI module for the Object Pattern Recognizer application."""
 
-import os
+
 import tkinter as tk
 from tkinter import filedialog, ttk
 from typing import Any, List, Optional, Tuple
-import numpy as np
 
 import cv2
 from PIL import Image, ImageTk
