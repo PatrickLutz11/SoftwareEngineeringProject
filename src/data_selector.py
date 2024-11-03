@@ -3,7 +3,7 @@ programm to select data channel and get data stream of selected channel.
 """
 
 from data_streams import DataStream, CameraStream, FolderStream
-from typing import Optional
+from typing import List, Optional
 
 class DataSelector:
     _camera_keywords = ["c", "camera", "cam"]
@@ -22,7 +22,7 @@ class DataSelector:
         self.stream: Optional[DataStream] = None
         self.select_stream(source_type)
 
-    def select_stream(self, source_type:str = 'c', folder_path:str = "") -> bool:
+    def select_stream(self, source_type:str = 'c') -> bool:
         """Selects and sets the data stream based on the source type.
 
         Args:
@@ -33,7 +33,6 @@ class DataSelector:
         Returns:
             bool: True if successful, False otherwise.
         """
-        self.folder_path=folder_path
         source_type = source_type.lower()
         
         if source_type in self._camera_keywords:
@@ -57,15 +56,24 @@ class DataSelector:
             DataStream: Data stream instance or None.
         """
         return self.stream
+    
+    def get_names_image(self) -> List[str]:
+        """Get name of images, if they exist.
 
+        Returns:
+            List[str]: List of image names. Empty, otherwise.
+        """
+        return stream.image_tuple[1]
 if __name__ == "__main__":
     import cv2
-    selector = DataSelector("i", R"C:\Users\janni\Downloads\test_images") # must be absolute path
+    selector = DataSelector("i", R"C:\Users\janni\Downloads\out") # must be absolute path
     
     selector.select_stream('i') # 'c' or 'i'
     stream = selector.get_stream()
     display_time_img = 1000 # in ms
     is_opened = stream.open_data_stream()
+    test_name = selector.get_names_image()
+    print(test_name)
     while(is_opened):
         img = stream.get_current_image()
         cv2.imshow("q: end stream", img)

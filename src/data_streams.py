@@ -1,9 +1,10 @@
 import cv2
-from typing import Optional, List, final
+from typing import Optional, List, Tuple, final
 from abc import ABC, abstractmethod
 
 import handling_cameras
 import handling_paths_files
+from handling_paths_files import IntegrityChecker
 
 
 class DataStream(ABC):
@@ -11,6 +12,7 @@ class DataStream(ABC):
 
     def __init__(self) -> None:
         self.current_image = None
+        self.image_tuple:Tuple[cv2.typing.matLike, str]=("","")
 
     @abstractmethod
     def open_data_stream(self) -> bool:
@@ -47,6 +49,17 @@ class DataStream(ABC):
             cv2.typing.MatLike: current image, if successful. None, otherwise.
         """
         return self.current_image
+    
+    @final
+    def get_names_images_list(self):
+        """
+        Get name of opened images.
+
+        Returns:
+            List[str]: List of image names.
+        """
+        return self.image_tuple[1]
+
 
 
 class CameraStream(DataStream):
@@ -72,7 +85,6 @@ class CameraStream(DataStream):
 class FolderStream(DataStream):
     def __init__(self, _folder_path:str="") -> None:
         super().__init__()
-        self.image_list = []
         self._id_image:int = 0
         
         self.ph = handling_paths_files.PathHandling(_folder_path)
@@ -80,35 +92,29 @@ class FolderStream(DataStream):
 
     def open_data_stream(self) -> bool:
         input_path = self.ph.get_path_abs_input()
-        if not (self.ph.check_path_validity(input_path)):
+        
+        if not(IntegrityChecker.check_path_validity(input_path)):
             return False
         self.fh = handling_paths_files.FileHandling(input_path)
-        self.image_list = self.fh.open_all_files()[0]
-        if len(self.image_list[0]) == 0:
+        self.image_tuple = self.fh.open_all_files()
+        if len(self.image_tuple[0]) == 0:
             print("ERROR: no Image found")
             return False
         self._id_image = 0
         return self.update_data_stream()
 
     def update_data_stream(self) -> bool:
-        amount_images = len(self.image_list)
+        image_list = self.image_tuple[0]
+        amount_images = len(image_list)
+        
         if amount_images > self._id_image:
-            self.current_image = self.image_list[self._id_image]
+            self.current_image = image_list[self._id_image]
             self._id_image += 1
             return True
         return False
 
     def close_data_stream(self) -> bool:
         self.current_image = None
-        self.image_list = []
+        self.image_tuple = ()
         self._id_image = 0
         return True
-    
-    def get_names_images_list(self) -> List[str]:
-        """
-        Get name of opened images.
-
-        Returns:
-            List[str]: List of image names.
-        """
-        return self.image_list[1]

@@ -5,6 +5,7 @@ from PIL import Image as PilImg
 from PIL.Image import Image
 from typing import List, Tuple
 
+VALID_TYPES = [".jpg", ".png"]
 
 class PathHandling():
     def __init__(self, _path_abs_in: str="", ) -> None:
@@ -15,7 +16,7 @@ class PathHandling():
         self.path_abs_in = ""
         self.path_abs_out = ""
 
-        if (len(_path_abs_in)>0) and self.check_path_validity(_path_abs_in):
+        if (len(_path_abs_in)>0) and IntegrityChecker.check_path_validity(_path_abs_in):
             self.path_abs_in = _path_abs_in
 
         
@@ -47,21 +48,6 @@ class PathHandling():
         """
         self._create_abs_paths()
         return self.path_abs_out
-    
-    @staticmethod
-    def check_path_validity(path:str) -> bool:
-        """checks if path exists
-
-        Args:
-            path (str): system path of directory, folder or file
-
-        Returns:
-            bool: True, if exists, otherwise False
-        """
-        if (os.path.exists(path)) is False: 
-            print(f"ERROR: This path does not exist! \n{path = }\n")
-            return False
-        return True
     
     
     def _create_abs_paths(self) -> bool:
@@ -122,12 +108,14 @@ class FileHandling():
         items = []
         filenames = [] 
         for root, dirs, files in os.walk(path):
-                for f in files: 
-                    if search_term is None or search_term in str(f): 
-                        filepath = os.path.join(path, str(f))
-                        item = self.open_one_file(filepath)
-                        items.append(item)
-                        filenames.append(f)
+                for file in files: 
+                    file = str(file)
+                    if not(search_term) or search_term in file: 
+                        if IntegrityChecker.check_file_type(file):
+                            filepath = os.path.join(path, file)
+                            item = self.open_one_file(filepath)
+                            items.append(item)
+                            filenames.append(file)
                 if (subfolderCheck is False): 
                     break
         if not items: 
@@ -140,14 +128,14 @@ class FileHandling():
             ImageCv = ImageConverter().open_image_opencv(path_file)
         except Exception as e:
              print(f"ERROR: Cannot open image: \n{e}")
+             return None
         return ImageCv
     
     
     def remove_one_file(self, path_file: str): 
         os.remove(path_file)
         return
-    
-    
+      
     
 
 class ImageConverter:
@@ -172,7 +160,7 @@ class ImageConverter:
 
         Returns:
             Image: image in pillow format
-        """
+        """ 
         return PilImg.open(path_image)
     
     def convert_image_pillow_to_opencv(self, pil_image: Image) -> cv2.typing.MatLike:
@@ -196,3 +184,34 @@ class ImageConverter:
             Image: image in pillow format
         """
         return PilImg.fromarray(cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB))
+    
+class IntegrityChecker:
+    @staticmethod
+    def check_path_validity(path:str) -> bool:
+        """checks if path exists
+
+        Args:
+            path (str): system path of directory, folder or file
+
+        Returns:
+            bool: True, if exists, otherwise False
+        """
+        if (os.path.exists(path)) is False: 
+            print(f"ERROR: This path does not exist! \n{path = }\n")
+            return False
+        return True
+    
+    @staticmethod
+    def check_file_type(path:str) -> bool:
+        """checks, if file type is supported
+
+        Args:
+            path (str): path of file
+
+        Returns:
+            bool: True, if supported. False, otherwise.
+        """
+        for endings in VALID_TYPES:
+            if path.endswith(endings):
+                return True
+        return False
