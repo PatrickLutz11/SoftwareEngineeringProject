@@ -187,7 +187,7 @@ class ImageConverter:
     
 class IntegrityChecker:
     @staticmethod
-    def check_path_validity(path:str) -> bool:
+    def check_path_validity(path:str, error_print:bool = True) -> bool:
         """checks if path exists
 
         Args:
@@ -197,7 +197,8 @@ class IntegrityChecker:
             bool: True, if exists, otherwise False
         """
         if (os.path.exists(path)) is False: 
-            print(f"ERROR: This path does not exist! \n{path = }\n")
+            if error_print:
+                print(f"ERROR: This path does not exist! \n{path = }\n")
             return False
         return True
     

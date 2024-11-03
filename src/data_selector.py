@@ -3,6 +3,7 @@ programm to select data channel and get data stream of selected channel.
 """
 
 from data_streams import DataStream, CameraStream, FolderStream
+from handling_paths_files import IntegrityChecker
 from typing import List, Optional
 
 class DataSelector:
@@ -22,17 +23,21 @@ class DataSelector:
         self.stream: Optional[DataStream] = None
         self.select_stream(source_type)
 
-    def select_stream(self, source_type:str = 'c') -> bool:
-        """Selects and sets the data stream based on the source type.
+    def select_stream(self, source_type:str = 'c', folder_path:str="") -> bool:
+        """_summary_
 
         Args:
-            source_type (str): The data source type.
-                ["c", "camera", "cam"]: Camera stream
-                ["i", "image"]: Image folder stream
+            source_type (str, optional): The data source type. Defaults to 'c'.
+                        ["c", "camera", "cam"]: Camera stream
+                        ["i", "image"]: Image folder stream
+            folder_path (str, optional): path of image folder. Defaults to "".
 
         Returns:
             bool: True if successful, False otherwise.
         """
+        if not(folder_path) and (IntegrityChecker.check_path_validity(folder_path,
+                                                                      False)):
+            self.folder_path = folder_path
         source_type = source_type.lower()
         
         if source_type in self._camera_keywords:
