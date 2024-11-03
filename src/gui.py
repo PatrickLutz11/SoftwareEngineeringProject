@@ -4,6 +4,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, ttk
 from typing import Any, List, Optional, Tuple
+import numpy as np
 
 import cv2
 from PIL import Image, ImageTk
@@ -54,6 +55,7 @@ class ObjectPatternRecognizerGUI:
         self.original_img_pil_list: List[Tuple[Image.Image, str]] = []
         self.current_image_index: int = 0
         self.img_tk: Optional[ImageTk.PhotoImage] = None
+        self.image_names: List[str] = []  # Liste für Bildnamen
 
         # Create UI elements
         self._create_mode_frame()
@@ -261,6 +263,10 @@ class ObjectPatternRecognizerGUI:
 
         # Start detection with controller
         self.controller.start_detection()
+        
+        # Get image names if in IMAGE mode
+        if self.mode.get() == "IMAGE":
+            self.image_names = self.controller.get_image_names()
 
         # Update button states
         self.toggle_button.config(text="Stop Detection")
@@ -293,6 +299,8 @@ class ObjectPatternRecognizerGUI:
         try:
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             pil_image = Image.fromarray(img_rgb)
+
+            # Speichere das Bild mit seinem Namen
             self.original_img_pil_list.append((pil_image, image_path))
 
             # Show navigation frame if we have images
@@ -337,38 +345,45 @@ class ObjectPatternRecognizerGUI:
             return
         if self.current_image_index >= len(self.original_img_pil_list):
             return
-
-        image_to_show, image_path = self.original_img_pil_list[
+    
+        image_to_show, image_name = self.original_img_pil_list[
             self.current_image_index
         ]
         total_images = len(self.original_img_pil_list)
-
-        # Update image name and counter
-        image_name = (os.path.basename(image_path) if image_path
-                     else f"Image {self.current_image_index + 1}")
-        counter_text = (f"Current Image: {image_name} "
-                       f"({self.current_image_index + 1}/{total_images})")
+    
+        # Update image name and counter with both number and name
+        if self.mode.get() == "IMAGE":
+            counter_text = (f"Image {self.current_image_index + 1}/{total_images}"
+                           f" - {image_name}")
+        else:
+            counter_text = f"Frame {self.current_image_index + 1}"
+            
         self.image_name_label.config(text=counter_text)
-
+    
         # Check canvas initialization
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
         if canvas_width <= 1 or canvas_height <= 1:
             self.master.after(100, self.update_displayed_image)
             return
-
+    
         # Calculate new image size
         img_width, img_height = image_to_show.size
         ratio = min(canvas_width / img_width, canvas_height / img_height)
         new_size = (int(img_width * ratio), int(img_height * ratio))
-
-        # Update canvas
+    
+        # Update canvas with resized image
         resized_img = image_to_show.resize(new_size, Image.Resampling.LANCZOS)
         self.img_tk = ImageTk.PhotoImage(resized_img)
         self.canvas.delete("all")
-        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.img_tk)
+        self.canvas.create_image(
+            canvas_width//2,
+            canvas_height//2,
+            image=self.img_tk,
+            anchor="center"
+        )
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
-
+    
         # Update the slider value
         self.image_slider.set(self.current_image_index)
 
@@ -393,3 +408,8 @@ class ObjectPatternRecognizerGUI:
             self.toggle_button.config(text="Start Detection")
             self.toggle_button.state(['!disabled'])
 
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ObjectPatternRecognizerGUI(master=root)
+    root.mainloop()

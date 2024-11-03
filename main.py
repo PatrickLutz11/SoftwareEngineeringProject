@@ -9,7 +9,7 @@ def main() -> None:
     src_path = os.path.join(os.path.dirname(__file__), "src")
     sys.path.insert(0, os.path.abspath(src_path))
     
-    from gui import ObjectPatternRecognizerGUI  # noqa: E402
+    from gui import ObjectPatternRecognizerGUI
     root = tk.Tk()
     app = ObjectPatternRecognizerGUI(root)
     root.mainloop()

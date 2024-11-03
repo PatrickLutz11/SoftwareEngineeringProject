@@ -1,7 +1,8 @@
 """Module for managing object detection in camera and image streams."""
 
 import threading
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, List
+import numpy as np
 
 from data_selector import DataSelector
 from logger import Logger
@@ -63,6 +64,19 @@ class DetectionController:
             source_type,
             self.image_path.get() if self.mode.get().upper() == "IMAGE" else ""
         )
+
+    def get_image_names(self) -> List[str]:
+        """Get names of all available images in the current stream.
+
+        Returns:
+            List[str]: List of image names, empty list if not in IMAGE mode
+                    or if no stream is available.
+        """
+        if (self.mode.get().upper() == "IMAGE" and 
+            self.data_selector and 
+            self.data_selector.get_stream()):
+            return self.data_selector.get_stream().get_names_images_list()
+        return []
 
     def _initialize_data_selector(self, source_type: str, folder_path: str = "") -> None:
         """Initialize the DataSelector with given parameters.
@@ -220,21 +234,43 @@ class DetectionController:
             frame_count: Current frame number.
             mode: Current detection mode.
         """
-        self.logger.set_current_image(f"image_{frame_count}")
-        shapes = Detection.shape_detection(img)
-        recognized = Detection.shape_recognition(shapes, img)
-        img = PictureModifications.resize_the_picture(img)
-        self.show_image_callback(img)
-        for shape in recognized:
-            try:
+        try:
+            # set Image Name
+            current_image_name = None
+            if mode == "IMAGE":
+                image_names = self.get_image_names()
+                if image_names and 0 <= frame_count - 1 < len(image_names):
+                    current_image_name = image_names[frame_count - 1]
+            else:
+                current_image_name = f"frame_{frame_count}"
+            
+            # Name for Logger
+            image_identifier = current_image_name if current_image_name else f"image_{frame_count}"
+            self.logger.set_current_image(image_identifier)
+            
+            # Image processing
+            processed_img = PictureModifications.resize_the_picture(img)
+            
+
+            
+            # Detect shapes
+            shapes = Detection.shape_detection(img)
+            recognized = Detection.shape_recognition(shapes, img)
+           
+            # show the image
+            self.show_image_callback(img)
+
+            # Logging
+            for shape in recognized:
                 self.logger.log_data(
                     pattern=shape.get('pattern', 'Unknown'),
                     color=shape.get('color', 'Unknown'),
                     frame=frame_count if mode == "CAMERA" else None,
                     confidence=shape.get('confidence', 'N/A')
                 )
-            except Exception as e:
-                print(f"Logging error: {e}")
+    
+        except Exception as e:
+            print(f"General error in _process_frame: {e}")
 
     def _cleanup_detection(self, mode: str) -> None:
         """Clean up after detection is complete.
