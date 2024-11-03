@@ -30,7 +30,7 @@ CYAN <span style="color:cyan">■</span>,
 BLUE <span style="color:blue">■</span>, 
 MAGENTA <span style="color:magenta">■</span>
 
-<span style="color:magenta">**■**</span>
+
 
 
 ## Requirements and Setup
@@ -85,7 +85,7 @@ Scrolling through result can be done with:
 - `Previous` and `Next`
 - `Slider` 
 
-> **NOTE:** Switching modes or input path can take a few seconds to adjust. Please wait till the process is completed. 
+> **NOTE:** Switching modes or the Image Path can take a few seconds to adjust. Please wait till the process is completed. 
 
 
 <img src="./doc/GUI.jpg" alt="drawing" width="600"/>
