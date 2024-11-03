@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module handling_configurations</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">handling_configurations</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Chandling_configurations.py">c:\fhgr\softwareengineeringproject\src\handling_configurations.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="json.html">json</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="handling_configurations.html#ConfigReader">ConfigReader</a>
+</dt><dt class="heading-text"><a href="handling_configurations.html#ConfigWriter">ConfigWriter</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ConfigReader">class <strong>ConfigReader</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ConfigReader">ConfigReader</a>(filepath:&nbsp;Union[str,&nbsp;pathlib.Path])<br>
+&nbsp;<br>
+Config&nbsp;reader<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ConfigReader-__init__"><strong>__init__</strong></a>(self, filepath: Union[str, pathlib.Path])</dt><dd><span class="code">Initiaize&nbsp;config&nbsp;reader<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(Union[str,&nbsp;Path]):&nbsp;path&nbsp;of&nbsp;config&nbsp;file</span></dd></dl>
+
+<dl><dt><a name="ConfigReader-get_all"><strong>get_all</strong></a>(self) -&gt; Dict[str, Any]</dt><dd><span class="code">Read&nbsp;all&nbsp;configuration&nbsp;values<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Dict[str,&nbsp;Any]:&nbsp;Dictionary&nbsp;of&nbsp;config</span></dd></dl>
+
+<dl><dt><a name="ConfigReader-get_int"><strong>get_int</strong></a>(self, key: str, default: int = 0) -&gt; int</dt><dd><span class="code">get&nbsp;int-value&nbsp;from&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;key.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;key&nbsp;(str):&nbsp;key&nbsp;of&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;(int,&nbsp;optional):&nbsp;default&nbsp;value.&nbsp;Defaults&nbsp;to&nbsp;0.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int:&nbsp;value&nbsp;as&nbsp;int</span></dd></dl>
+
+<dl><dt><a name="ConfigReader-get_path"><strong>get_path</strong></a>(self, key: str, default: Union[str, pathlib.Path] = '') -&gt; pathlib.Path</dt><dd><span class="code">get&nbsp;a&nbsp;path&nbsp;from&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;key.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;key&nbsp;(str):&nbsp;key&nbsp;of&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;(Union[str,&nbsp;Path],&nbsp;optional):&nbsp;default&nbsp;value.&nbsp;Defaults&nbsp;to&nbsp;"".<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Path:&nbsp;value&nbsp;as&nbsp;path</span></dd></dl>
+
+<dl><dt><a name="ConfigReader-get_value"><strong>get_value</strong></a>(self, key: str, default: Any = None) -&gt; Any</dt><dd><span class="code">get&nbsp;a&nbsp;value&nbsp;from&nbsp;<a href="builtins.html#object">object</a>&nbsp;with&nbsp;key.&nbsp;Return&nbsp;default,&nbsp;if&nbsp;not&nbsp;found<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;key&nbsp;(str):&nbsp;key&nbsp;of&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;default&nbsp;(Any,&nbsp;optional):&nbsp;Default&nbsp;value.&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Any:&nbsp;value&nbsp;of&nbsp;<a href="builtins.html#object">object</a>.&nbsp;Default,&nbsp;otherwise.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ConfigWriter">class <strong>ConfigWriter</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ConfigWriter">ConfigWriter</a>(filepath:&nbsp;Union[str,&nbsp;pathlib.Path])<br>
+&nbsp;<br>
+Config&nbsp;writer&nbsp;with&nbsp;path&nbsp;handling<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ConfigWriter-__init__"><strong>__init__</strong></a>(self, filepath: Union[str, pathlib.Path])</dt><dd><span class="code">initialize&nbsp;config&nbsp;writer<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filepath&nbsp;(Union[str,&nbsp;Path]):&nbsp;Path&nbsp;of&nbsp;config&nbsp;file</span></dd></dl>
+
+<dl><dt><a name="ConfigWriter-save_dict"><strong>save_dict</strong></a>(self, config_dict: Dict[str, Any]) -&gt; None</dt><dd><span class="code">Save&nbsp;multiple&nbsp;objects&nbsp;at&nbsp;once<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;config_dict&nbsp;(Dict[str,&nbsp;Any]):&nbsp;dictionary&nbsp;of&nbsp;multiple&nbsp;objects</span></dd></dl>
+
+<dl><dt><a name="ConfigWriter-save_value"><strong>save_value</strong></a>(self, key: str, value: Any) -&gt; None</dt><dd><span class="code">Save&nbsp;a&nbsp;single&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;key&nbsp;(str):&nbsp;key&nbsp;of&nbsp;<a href="builtins.html#object">object</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;(Any):&nbsp;value&nbsp;of&nbsp;<a href="builtins.html#object">object</a>&nbsp;(can&nbsp;be&nbsp;found&nbsp;with&nbsp;key)</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>Dict</strong> = typing.Dict<br>
+<strong>Union</strong> = typing.Union</td></tr></table>
+</body></html>

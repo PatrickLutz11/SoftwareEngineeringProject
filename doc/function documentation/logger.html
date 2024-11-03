@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module logger</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">logger</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Clogger.py">c:\fhgr\softwareengineeringproject\src\logger.py</a></td></tr></table>
+    <p><span class="code">Module&nbsp;for&nbsp;logging&nbsp;detection&nbsp;results&nbsp;in&nbsp;logs&nbsp;folder.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="os.html">os</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="logger.html#LogEntryCreator">LogEntryCreator</a>
+</dt><dt class="heading-text"><a href="logger.html#Logger">Logger</a>
+</dt><dt class="heading-text"><a href="logger.html#TimestampGenerator">TimestampGenerator</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="LogEntryCreator">class <strong>LogEntryCreator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#LogEntryCreator">LogEntryCreator</a>(pattern:&nbsp;str,&nbsp;color:&nbsp;str,&nbsp;**kwargs)<br>
+&nbsp;<br>
+Creates&nbsp;structured&nbsp;log&nbsp;entries&nbsp;for&nbsp;detection&nbsp;results.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="LogEntryCreator-__init__"><strong>__init__</strong></a>(self, pattern: str, color: str, **kwargs)</dt><dd><span class="code">Initialize&nbsp;a&nbsp;log&nbsp;entry.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pattern&nbsp;(str):&nbsp;Name&nbsp;of&nbsp;pattern<br>
+&nbsp;&nbsp;&nbsp;&nbsp;color&nbsp;(str):&nbsp;Name&nbsp;of&nbsp;color<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**kwargs:&nbsp;Additional&nbsp;optional&nbsp;information</span></dd></dl>
+
+<dl><dt><a name="LogEntryCreator-to_dict"><strong>to_dict</strong></a>(self) -&gt; dict</dt><dd><span class="code">Convert&nbsp;log&nbsp;entry&nbsp;to&nbsp;a&nbsp;dictionary.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;Dictionary&nbsp;containing&nbsp;all&nbsp;log&nbsp;data</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Logger">class <strong>Logger</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#Logger">Logger</a>(base_file_path='log.csv')&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+<a href="#Logger">Logger</a>&nbsp;class&nbsp;for&nbsp;recording&nbsp;detection&nbsp;results.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;handles&nbsp;the&nbsp;creation&nbsp;and&nbsp;management&nbsp;of&nbsp;log&nbsp;files,&nbsp;including<br>
+organizing&nbsp;them&nbsp;in&nbsp;a&nbsp;dedicated&nbsp;folder&nbsp;and&nbsp;creating&nbsp;unique&nbsp;filenames<br>
+for&nbsp;each&nbsp;session.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Logger-__init__"><strong>__init__</strong></a>(self, base_file_path='log.csv') -&gt; None</dt><dd><span class="code">Initialize&nbsp;CSV&nbsp;writer&nbsp;with&nbsp;unique&nbsp;file&nbsp;path.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;base_file_path&nbsp;(str,&nbsp;optional):&nbsp;Base&nbsp;path&nbsp;for&nbsp;CSV-log.&nbsp;Defaults&nbsp;to&nbsp;'log.csv'.</span></dd></dl>
+
+<dl><dt><a name="Logger-log_data"><strong>log_data</strong></a>(self, pattern: str, color: str, **kwargs) -&gt; None</dt><dd><span class="code">Log&nbsp;an&nbsp;entry&nbsp;with&nbsp;detection&nbsp;results.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pattern&nbsp;(str):&nbsp;Name&nbsp;of&nbsp;the&nbsp;detected&nbsp;pattern&nbsp;(e.g.,&nbsp;'Square',&nbsp;'Circle')<br>
+&nbsp;&nbsp;&nbsp;&nbsp;color&nbsp;(str):&nbsp;Color&nbsp;of&nbsp;the&nbsp;detected&nbsp;shape<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**kwargs:&nbsp;Additional&nbsp;optional&nbsp;information&nbsp;to&nbsp;log</span></dd></dl>
+
+<dl><dt><a name="Logger-set_current_image"><strong>set_current_image</strong></a>(self, image_identifier: str) -&gt; None</dt><dd><span class="code">Set&nbsp;the&nbsp;current&nbsp;image&nbsp;being&nbsp;processed.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_identifier&nbsp;(str):&nbsp;Name&nbsp;or&nbsp;number&nbsp;of&nbsp;current&nbsp;image</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="TimestampGenerator">class <strong>TimestampGenerator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Utility&nbsp;class&nbsp;for&nbsp;generating&nbsp;timestamps.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="TimestampGenerator-get_timestamp"><strong>get_timestamp</strong></a>() -&gt; str</dt><dd><span class="code">Get&nbsp;current&nbsp;timestamp&nbsp;with&nbsp;millisecond&nbsp;precision.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;Formatted&nbsp;string&nbsp;of&nbsp;current&nbsp;time</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module detection_color</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">detection_color</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Cdetection_color.py">c:\fhgr\softwareengineeringproject\src\detection_color.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cv2.html">cv2</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="detection_color.html#ColorDetector">ColorDetector</a>
+</dt><dt class="heading-text"><a href="detection_color.html#ColorLimiter">ColorLimiter</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ColorDetector">class <strong>ColorDetector</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Functions&nbsp;to&nbsp;detect&nbsp;color&nbsp;of&nbsp;shape<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ColorDetector-get_color"><strong>get_color</strong></a>(self, img: Union[cv2.Mat, numpy.ndarray], shape: List) -&gt; str</dt><dd><span class="code">Identifying&nbsp;the&nbsp;color&nbsp;of&nbsp;the&nbsp;found&nbsp;shapes<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;The&nbsp;image&nbsp;with&nbsp;shapes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shape&nbsp;(List):&nbsp;Shapes&nbsp;found&nbsp;within&nbsp;the&nbsp;image<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;str:&nbsp;The&nbsp;color&nbsp;of&nbsp;the&nbsp;shape.&nbsp;Empty&nbsp;string,&nbsp;if&nbsp;color&nbsp;is&nbsp;unkown.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ColorLimiter">class <strong>ColorLimiter</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">functions&nbsp;to&nbsp;get&nbsp;limits&nbsp;for&nbsp;color&nbsp;detection<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ColorLimiter-__init__"><strong>__init__</strong></a>(self)</dt><dd><span class="code">Initialize&nbsp;<a href="#ColorLimiter">ColorLimiter</a></span></dd></dl>
+
+<dl><dt><a name="ColorLimiter-get_limits_hsv"><strong>get_limits_hsv</strong></a>(self, color_bgr: List[int]) -&gt; Tuple</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>BGR_COLORS</strong> = {}<br>
+<strong>List</strong> = typing.List<br>
+<strong>Tuple</strong> = typing.Tuple</td></tr></table>
+</body></html>
