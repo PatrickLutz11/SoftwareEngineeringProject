@@ -59,28 +59,27 @@ Attributes:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;current_image_index:&nbsp;Index&nbsp;of&nbsp;currently&nbsp;displayed&nbsp;image.<br>&nbsp;</span></td></tr>
 <tr><td>&nbsp;</td>
 <td class="singlecolumn">Methods defined here:<br>
-<dl><dt><a name="ObjectPatternRecognizerGUI-__init__"><strong>__init__</strong></a>(self, master: tkinter.Tk) -&gt; None</dt><dd><span class="code">_summary_<br>
+<dl><dt><a name="ObjectPatternRecognizerGUI-__init__"><strong>__init__</strong></a>(self, master: tkinter.Tk) -&gt; None</dt><dd><span class="code">Initialize&nbsp;the&nbsp;GUI.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;master&nbsp;(tk.Tk):&nbsp;_description_</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;master&nbsp;(tk.Tk):&nbsp;main&nbsp;application&nbsp;window.</span></dd></dl>
 
 <dl><dt><a name="ObjectPatternRecognizerGUI-browse_image"><strong>browse_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Open&nbsp;file&nbsp;dialog&nbsp;for&nbsp;selecting&nbsp;image&nbsp;folder&nbsp;and&nbsp;save&nbsp;the&nbsp;path.</span></dd></dl>
 
-<dl><dt><a name="ObjectPatternRecognizerGUI-collect_images"><strong>collect_images</strong></a>(self, img: Union[cv2.Mat, numpy.ndarray], image_path: str = '') -&gt; None</dt><dd><span class="code">_summary_<br>
-&nbsp;<br>
+<dl><dt><a name="ObjectPatternRecognizerGUI-collect_images"><strong>collect_images</strong></a>(self, img: Union[cv2.Mat, numpy.ndarray], image_path: str = '') -&gt; None</dt><dd><span class="code">Queue&nbsp;image&nbsp;collection&nbsp;for&nbsp;GUI&nbsp;thread.<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;_description_<br>
-&nbsp;&nbsp;&nbsp;&nbsp;image_path&nbsp;(str,&nbsp;optional):&nbsp;_description_.&nbsp;Defaults&nbsp;to&nbsp;"".</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;The&nbsp;image&nbsp;to&nbsp;be&nbsp;collected.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_path&nbsp;(str,&nbsp;optional):&nbsp;Path&nbsp;of&nbsp;the&nbsp;image&nbsp;file.&nbsp;Defaults&nbsp;to&nbsp;"".</span></dd></dl>
 
-<dl><dt><a name="ObjectPatternRecognizerGUI-on_slider_change"><strong>on_slider_change</strong></a>(self, event: Any) -&gt; None</dt><dd><span class="code">_summary_<br>
+<dl><dt><a name="ObjectPatternRecognizerGUI-on_slider_change"><strong>on_slider_change</strong></a>(self, event: Any) -&gt; None</dt><dd><span class="code">Handle&nbsp;slider&nbsp;value&nbsp;changes.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;event&nbsp;(Any):&nbsp;_description_</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;event&nbsp;(Any):&nbsp;Event&nbsp;Object.</span></dd></dl>
 
-<dl><dt><a name="ObjectPatternRecognizerGUI-on_window_resize"><strong>on_window_resize</strong></a>(self, event: tkinter.Event) -&gt; None</dt><dd><span class="code">_summary_<br>
+<dl><dt><a name="ObjectPatternRecognizerGUI-on_window_resize"><strong>on_window_resize</strong></a>(self, event: tkinter.Event) -&gt; None</dt><dd><span class="code">Handle&nbsp;window&nbsp;resize&nbsp;events.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;event&nbsp;(tk.Event):&nbsp;_description_</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;event&nbsp;(tk.Event):&nbsp;The&nbsp;event&nbsp;<a href="builtins.html#object">object</a>.</span></dd></dl>
 
 <dl><dt><a name="ObjectPatternRecognizerGUI-show_next_image"><strong>show_next_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Display&nbsp;the&nbsp;next&nbsp;image&nbsp;in&nbsp;the&nbsp;list.</span></dd></dl>
 
@@ -96,10 +95,10 @@ Args:<br>
 
 <dl><dt><a name="ObjectPatternRecognizerGUI-update_displayed_image"><strong>update_displayed_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Update&nbsp;the&nbsp;image&nbsp;display&nbsp;and&nbsp;counter.</span></dd></dl>
 
-<dl><dt><a name="ObjectPatternRecognizerGUI-update_status"><strong>update_status</strong></a>(self, message: str) -&gt; None</dt><dd><span class="code">_summary_<br>
+<dl><dt><a name="ObjectPatternRecognizerGUI-update_status"><strong>update_status</strong></a>(self, message: str) -&gt; None</dt><dd><span class="code">Update&nbsp;the&nbsp;status&nbsp;label&nbsp;text.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;message&nbsp;(str):&nbsp;_description_</span></dd></dl>
+&nbsp;&nbsp;&nbsp;&nbsp;message&nbsp;(str):&nbsp;The&nbsp;message&nbsp;to&nbsp;display&nbsp;in&nbsp;the&nbsp;status&nbsp;label.</span></dd></dl>
 
 <hr>
 Data descriptors defined here:<br>
