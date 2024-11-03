@@ -211,7 +211,7 @@ class ObjectPatternRecognizerGUI:
         if filepath:
             self.image_path.set(filepath)
             # Save the path directly in GUI
-            self.config_writer.save_value('last_image_path', filepath)
+            self.config_writer.save_value('last_image_folder_path', filepath)
 
     def toggle_detection(self) -> None:
         """Toggle detection process on/off."""
