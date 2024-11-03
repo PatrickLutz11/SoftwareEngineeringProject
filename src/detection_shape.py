@@ -79,10 +79,10 @@ class Detection:
                     shape_name = "Rectangle"
             
             if len(define_shape) == 5:
-                shape_name = "Pentacle"
+                shape_name = "Pentagon"
             
             if len(define_shape) == 6:
-                shape_name = "Hexagram"
+                shape_name = "Hexagon"
             
             
             cv2.drawContours(img, [shape], 0, BGR_COLORS["CYAN"], 5)
