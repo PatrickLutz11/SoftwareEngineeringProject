@@ -9,6 +9,7 @@ import cv2
 from PIL import Image, ImageTk
 
 from controller import DetectionController
+from handling_configurations import ConfigReader, ConfigWriter
 
 
 class ObjectPatternRecognizerGUI:
@@ -28,11 +29,7 @@ class ObjectPatternRecognizerGUI:
     """
 
     def __init__(self, master: tk.Tk) -> None:
-        """Initialize the GUI.
-
-        Args:
-            master: The root tkinter window.
-        """
+        """Initialize the GUI."""
         self.master = master
         self.master.title("Object Pattern Recognizer")
 
@@ -40,20 +37,39 @@ class ObjectPatternRecognizerGUI:
         self.master.rowconfigure(5, weight=1)
         self.master.columnconfigure(0, weight=1)
 
+        # Initialize config handling
+        self.config_reader = ConfigReader("config.json")
+        self.config_writer = ConfigWriter("config.json")
+
         # Initialize instance variables
         self.mode = tk.StringVar(value="CAMERA")
         self.image_path = tk.StringVar()
-        self.controller: Optional[DetectionController] = None
+
+        # Load last path if exists
+        last_path = self.config_reader.get_value('last_image_folder_path', "")
+        if last_path:
+            self.mode.set("IMAGE")
+            self.image_path.set(last_path)
+
         self.original_img_pil_list: List[Tuple[Image.Image, str]] = []
         self.current_image_index: int = 0
         self.img_tk: Optional[ImageTk.PhotoImage] = None
 
+        # Create UI elements
         self._create_mode_frame()
         self._create_path_frame()
         self._create_button_frame()
         self._create_labels()
         self._create_image_frame()
-        
+
+        # Initialize controller
+        self.controller = DetectionController(
+            mode=self.mode,
+            image_path=self.image_path,
+            show_image_callback=self.collect_images,
+            update_status_callback=self.update_status
+        )
+
         # Initialize widget states
         self.update_button_state()
         
@@ -185,20 +201,21 @@ class ObjectPatternRecognizerGUI:
             self.path_frame.columnconfigure(0, weight=1)
         else:
             self.path_frame.grid_remove()
-            self.image_path.set("")
         
         self.toggle_button.config(text="Start Detection")
         self.toggle_button.state(['!disabled'])
 
     def browse_image(self) -> None:
-        """Open file dialog for selecting image folder."""
+        """Open file dialog for selecting image folder and save the path."""
         filepath = filedialog.askdirectory(title='Select Image Folder')
         if filepath:
             self.image_path.set(filepath)
+            # Save the path directly in GUI
+            self.config_writer.save_value('last_image_path', filepath)
 
     def toggle_detection(self) -> None:
         """Toggle detection process on/off."""
-        if not self.controller or not self.controller.running:
+        if not self.controller.running:
             self.start_detection()
         else:
             self.stop_detection()
@@ -217,13 +234,7 @@ class ObjectPatternRecognizerGUI:
         self.prev_button.pack_forget()
         self.next_button.pack_forget()
 
-        # Initialize and start controller
-        self.controller = DetectionController(
-            mode=self.mode,
-            image_path=self.image_path,
-            show_image_callback=self.collect_images,
-            update_status_callback=self.update_status
-        )
+        # Start detection with controller
         self.controller.start_detection()
 
         # Update button states
@@ -237,7 +248,6 @@ class ObjectPatternRecognizerGUI:
             self.controller.stop_detection()
             self.toggle_button.config(text="Start Detection")
             self.toggle_button.state(['!disabled'])
-            self.controller = None
 
     def collect_images(self, img: Any, image_path: str = "") -> None:
         """Queue image collection for GUI thread.

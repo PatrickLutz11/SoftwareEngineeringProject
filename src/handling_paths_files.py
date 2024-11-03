@@ -4,16 +4,21 @@ import cv2
 from PIL import Image as PilImg
 from PIL.Image import Image
 from typing import List, Tuple
-from config_reader import ConfigReader
 
 
 class PathHandling():
-    def __init__(self, path_configfile:str="config.ini") -> None:
-        self.conread = ConfigReader(path_configfile)
+    def __init__(self, _path_abs_in: str="", ) -> None:
+        self.path_rel_in = "in"
+        self.path_rel_out = "out"
+        
         self.path_abs_parent = ""
         self.path_abs_in = ""
         self.path_abs_out = ""
-    
+
+        if (len(_path_abs_in)>0) and self.check_path_validity(_path_abs_in):
+            self.path_abs_in = _path_abs_in
+
+        
     def get_path_abs_parent(self) -> str:
         """get parent folder as absolute path
 
@@ -51,7 +56,7 @@ class PathHandling():
             path (str): system path of directory, folder or file
 
         Returns:
-            bool: True, if exists. False otherwise.
+            bool: True, if exists, otherwise False
         """
         if (os.path.exists(path)) is False: 
             print(f"ERROR: This path does not exist! \n{path = }\n")
@@ -67,20 +72,13 @@ class PathHandling():
         """
         if not self.path_abs_parent:
             self.path_abs_parent = os.getcwd()
-        
+            
         if not self.path_abs_in:
-            path, is_relative = self.conread.get_input_path()
-            if is_relative: 
-                self.path_abs_in = os.path.join(self.path_abs_parent,path)
-            else: 
-                self.path_abs_in = path
-        
+            self.path_abs_in = os.path.join(self.path_abs_parent,
+                                            self.path_rel_in)
         if not self.path_abs_out:
-            path, is_relative = self.conread.get_output_path()
-            if is_relative: 
-                self.path_abs_out= os.path.join(self.path_abs_parent,path)
-            else: 
-                self.path_abs_out = path
+            self.path_abs_out = os.path.join(self.path_abs_parent, 
+                                               self.path_rel_out)
         return True
         
     
@@ -198,9 +196,3 @@ class ImageConverter:
             Image: image in pillow format
         """
         return PilImg.fromarray(cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB))
-    
-if __name__ == "__main__":
-    ph = PathHandling()
-    print(ph.get_path_abs_input())
-    print(ph.get_path_abs_output())
-    print(ph.get_path_abs_parent())
