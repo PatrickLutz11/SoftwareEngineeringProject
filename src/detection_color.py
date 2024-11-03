@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 from typing import List, Tuple
 
-from config_reader_test import ConfigReader
+from handling_configurations import ConfigReader,ConfigWriter
 
-BGR_COLORS = ConfigReader().get_bgr_color_dict()
+BGR_COLORS = ConfigReader("config.json").get_value('BGR_COLORS', {})
 
 class ColorDetector:
     def get_color(self, img:cv2.typing.MatLike, shape:List) -> str:
@@ -104,15 +104,40 @@ class ColorLimiter:
 
 
 if __name__ == "__main__": 
-    """Debugging of functions
-    """
+    """Initialize configuration and debug functions"""
+    # First initialize the color configuration
+    config_writer = ConfigWriter("config.json")
+    
+    # Write BGR colors if they don't exist
+    current_config = ConfigReader("config.json").get_value('BGR_COLORS', None)
+    if not current_config:
+        color_config = {
+            'BGR_COLORS': {
+                'BLUE': [255, 0, 0],
+                'GREEN': [0, 255, 0],
+                'RED': [0, 0, 255],
+                'MAGENTA': [255, 0, 255],
+                'CYAN': [255, 255, 0],
+                'YELLOW': [0, 255, 255],
+                'BLACK': [0, 0, 0],
+                'WHITE': [255, 255, 255]
+            }
+        }
+        config_writer.save_dict(color_config)
+        print("Color configuration initialized")
+    else:
+        print("Using existing color configuration")
+
+    BGR_COLORS = ConfigReader("config.json").get_value('BGR_COLORS', {})
+    
+    # Test shape detection
     from detection_shape import Detection
-    img = cv2.imread(R"in/test_image_03.jpg")#(R"in/test_image_03.jpg")
+    img = cv2.imread(R"in/test_image_03.jpg")
     cv2.imshow("test", img)
     shapes = Detection.shape_detection(img)
-    print(len(shapes))
+    print(f"Number of shapes: {len(shapes)}")
     
-    print(BGR_COLORS['WHITE'])
+    print(f"WHITE color values: {BGR_COLORS['WHITE']}")
     
     Detection.shape_recognition(shapes, img)
     cv2.imshow("newimage", img)

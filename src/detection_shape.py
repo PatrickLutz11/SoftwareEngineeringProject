@@ -2,10 +2,12 @@ import cv2
 import numpy as np
 from typing import List, Dict, Tuple
 
-from config_reader_test import ConfigReader
+
+from handling_configurations import ConfigReader
+
 from detection_color import ColorDetector
 
-BGR_COLORS = ConfigReader().get_bgr_color_dict()
+BGR_COLORS = ConfigReader("config.json").get_value('BGR_COLORS')
 
 class Detection:
     def shape_detection(img:cv2.typing.MatLike, ratio_image_to_shape:int=100) -> List:
