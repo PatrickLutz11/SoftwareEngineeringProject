@@ -35,7 +35,7 @@ class DataSelector:
         Returns:
             bool: True if successful, False otherwise.
         """
-        if not(folder_path) and (IntegrityChecker.check_path_validity(folder_path,
+        if (folder_path) and (IntegrityChecker.check_path_validity(folder_path,
                                                                       False)):
             self.folder_path = folder_path
         source_type = source_type.lower()
