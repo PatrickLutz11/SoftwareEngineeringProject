@@ -30,7 +30,7 @@ CYAN <span style="color:cyan">■</span>,
 BLUE <span style="color:blue">■</span>, 
 MAGENTA <span style="color:magenta">■</span>
 
-
+<span style="color:magenta">**■**</span>
 
 
 ## Requirements and Setup
@@ -73,8 +73,20 @@ This is the Graphical User Interface or also known as GUI.
 ### Graphical User Interface (GUI)
 The GUI is the window of the programm for the user to interact with.
 It contains a live camera feed and Image detection from a folder to choose.
-There is a button to start the detection in IMAGE- and CAMERA-mode and a button to stop the detection in the CAMERA-mode.
-After the detection is finished, the GUI will show the detected shapes and their colors on the processed images withe the option to switch petweeen the images with buttons and a slider.
+
+Button descriptions:
+- `CAMERA`: Mode to use camera as stream for detection.
+- `IMAGE`: Mode to use folder path as stream for detection
+- `Browse`: Browse through directorys and select path for input.
+- `Start Detection`: Starts detection in either `IMAGE`- and `CAMERA`-mode.
+- `Stop Detection`: Stops detection in `CAMERA`-mode.
+
+Scrolling through result can be done with: 
+- `Previous` and `Next`
+- `Slider` 
+
+> **NOTE:** Switching modes or input path can take a few seconds to adjust. Please wait till the process is completed. 
+
 
 <img src="./doc/GUI.jpg" alt="drawing" width="600"/>
 
