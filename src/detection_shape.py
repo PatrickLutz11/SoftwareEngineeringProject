@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from typing import List, Tuple
+from typing import List, Dict, Tuple
 
 from config_reader_test import ConfigReader
 from detection_color import ColorDetector
@@ -52,20 +52,25 @@ class Detection:
         return filtered_found_shapes 
 
             
-    def shape_recognition(found_shapes:List, img:cv2.typing.MatLike) -> None:
+    def shape_recognition(found_shapes:List, img:cv2.typing.MatLike) -> List[Dict[str, str]]:
         """Identification of found shapes
 
         Args:
             found_shapes (List): List of found shapes within the image
             img (cv2.typing.MatLike): The image with shapes
+            
+        Returns:
+            List[Dict[str, str]]: List of recognized shapes with pattern and color
         """
+        recognized_shapes = []  # List to store recognized shapes
+        
         i = 0
         for shape in found_shapes:
             if i == 0:
                 i = 1
                 continue
             
-            define_shape = cv2.approxPolyDP(shape, 0.1 * cv2.arcLength(shape, True), True)
+            define_shape = cv2.approxPolyDP(shape, 0.01 * cv2.arcLength(shape, True), True)
             shape_color = ColorDetector().get_color(img, shape)
             shape_name = "Circle"
             
@@ -118,7 +123,9 @@ class Detection:
                 cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
             """
             cv2.drawContours(img, [shape], 0, BGR_COLORS["CYAN"], 5)
-            cv2.putText(img, f'{shape_name}, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, BGR_COLORS["BLACK"], 2) 
+            cv2.putText(img, f'{shape_name}, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, BGR_COLORS["BLACK"], 2) 
+            recognized_shapes.append({'pattern': shape_name, 'color': shape_color})
+        return recognized_shapes
 
 
 
