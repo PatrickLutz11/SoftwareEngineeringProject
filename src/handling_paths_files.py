@@ -184,7 +184,8 @@ class ImageConverter:
             Image: image in pillow format
         """
         return PilImg.fromarray(cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB))
-    
+
+
 class IntegrityChecker:
     @staticmethod
     def check_path_validity(path:str, error_print:bool = True) -> bool:
@@ -212,6 +213,7 @@ class IntegrityChecker:
         Returns:
             bool: True, if supported. False, otherwise.
         """
+        path = path.lower()
         for endings in VALID_TYPES:
             if path.endswith(endings):
                 return True
