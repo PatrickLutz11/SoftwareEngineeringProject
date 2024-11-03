@@ -1,7 +1,9 @@
 import cv2
+from abc import abstractmethod
 
 class PictureModifications:
-    
+    """Functions to modify an image."""
+    @abstractmethod
     def resize_the_picture(img:cv2.typing.MatLike) -> cv2.typing.MatLike:
         """Scaling the picture to a suitable size
 
@@ -11,7 +13,6 @@ class PictureModifications:
         Returns:
             cv2.typing.MatLike: Resized image
         """
-        
         scale = 70
         width = int(img.shape[1] * scale / 100)
         height = int(img.shape[0] * scale / 100)

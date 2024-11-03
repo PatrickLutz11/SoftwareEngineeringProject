@@ -2,6 +2,7 @@ import os
 import csv
 
 class CSVWriter:
+    """Functions to write on csv-file"""
     def __init__(self, file_path: str):
         """Initialize CSV writer with file path.
 
