@@ -2,7 +2,6 @@
 
 import threading
 from typing import Any, Callable, Optional, List
-import numpy as np
 
 from data_selector import DataSelector
 from logger import Logger

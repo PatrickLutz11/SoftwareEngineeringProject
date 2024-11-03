@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from typing import List, Tuple
+from typing import List
 
 class CameraSearch:
     """Function to search system for all avaiable cameras."""

@@ -1,8 +1,6 @@
 import cv2
-import numpy as np
 from typing import List, Dict, Tuple
 from abc import abstractmethod
-
 
 from handling_configurations import ConfigReader
 from detection_color import ColorDetector

@@ -1,5 +1,5 @@
 import cv2
-from typing import Optional, List, Tuple, final
+from typing import Optional, Tuple, final
 from abc import ABC, abstractmethod
 
 import handling_cameras
