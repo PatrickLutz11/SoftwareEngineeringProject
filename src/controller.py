@@ -1,7 +1,7 @@
 import threading
 from typing import Callable, Optional, Any
 
-from detection import Detection
+from detection_shape import Detection
 from picture_modifications import PictureModifications
 from logger import Log
 from data_selector import DataSelector

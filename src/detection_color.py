@@ -7,10 +7,6 @@ from config_reader_test import ConfigReader
 BGR_COLORS = ConfigReader().get_bgr_color_dict()
 
 class ColorDetector:
-    def __init__(self):
-        self. _range_spectrum = 15
-    
-    
     def get_color(self, img:cv2.typing.MatLike, shape:List) -> str:
         """Identifying the color of the found shapes
 
@@ -31,7 +27,7 @@ class ColorDetector:
         hsv_value = cv2.cvtColor(rgb_values_int, cv2.COLOR_BGR2HSV)
         detected_color = ""
         for name_color, values_color in BGR_COLORS.items():
-            limits_lower, limits_upper = self.get_limits_hsv(values_color)
+            limits_lower, limits_upper = ColorLimiter().get_limits_hsv(values_color)
             
             mask_color_lower = cv2.inRange(hsv_value, 
                                            limits_lower[0], limits_lower[1])
@@ -45,14 +41,17 @@ class ColorDetector:
         
     
 class ColorLimiter:
+    def __init__(self):
+        self._range_spectrum = 15
+        
     def get_limits_hsv(self, color_bgr:List[int])->Tuple:
         color = np.array([[color_bgr]], dtype=np.uint8)
         hsv_color = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
         hue = hsv_color[0][0][0]
         hue_limits_lower = self._get_hue_limits_lower(int(hue))
         hue_limits_upper = self._get_hue_limits_upper(int(hue))
-        limit_array_1 = self._get_limits_array(hue_limits_lower)
-        limit_array_2 = self._get_limits_array(hue_limits_upper)
+        limit_array_1 = self._get_hsv_limits(hue_limits_lower)
+        limit_array_2 = self._get_hsv_limits(hue_limits_upper)
         
         return limit_array_1, limit_array_2
     
@@ -107,7 +106,7 @@ class ColorLimiter:
 if __name__ == "__main__": 
     """Debugging of functions
     """
-    from detection import Detection
+    from detection_shape import Detection
     img = cv2.imread(R"in/test_image_03.jpg")#(R"in/test_image_03.jpg")
     cv2.imshow("test", img)
     shapes = Detection.shape_detection(img)

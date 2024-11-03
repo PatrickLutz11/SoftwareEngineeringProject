@@ -2,16 +2,10 @@ import cv2
 import numpy as np
 from typing import List, Tuple
 
-BGR_COLORS = {
-    "BLUE" : [255, 0, 0],
-    "GREEN" : [0, 255, 0],
-    "RED" : [0, 0, 255],
-    "MANGENTA": [255, 0, 255],
-    "CYAN" : [255, 255, 0],
-    "YELLOW": [0, 255, 255],
-    "BLACK": [0, 0, 0],
-    "WHITE": [255, 255, 255],
-}
+from config_reader_test import ConfigReader
+from detection_color import ColorDetector
+
+BGR_COLORS = ConfigReader().get_bgr_color_dict()
 
 class Detection:
     def shape_detection(img:cv2.typing.MatLike, ratio_image_to_shape:int=100) -> List:
@@ -71,14 +65,32 @@ class Detection:
                 i = 1
                 continue
             
-            define_shape = cv2.approxPolyDP(shape, 0.01 * cv2.arcLength(shape, True), True)
+            define_shape = cv2.approxPolyDP(shape, 0.1 * cv2.arcLength(shape, True), True)
             shape_color = ColorDetector().get_color(img, shape)
+            shape_name = "Circle"
             
             shape_points = cv2.moments(shape) 
             if shape_points['m00'] != 0.0: 
                 x = int(shape_points['m10']/shape_points['m00']) - 100
                 y = int(shape_points['m01']/shape_points['m00']) 
-             
+            
+            if len(define_shape) == 3:
+                shape_name = "Triangle"
+            
+            if len(define_shape) == 4:
+                (x1, y1, w, h) = cv2.boundingRect(define_shape)
+                aspect_ratio = float(w) / h
+                if 0.95 <= aspect_ratio <= 1.05:
+                    shape_name = "Square"
+                else:
+                    shape_name = "Rectangle"
+            
+            if len(define_shape) == 5:
+                shape_name = "Pentacle"
+            
+            if len(define_shape) == 6:
+                shape_name = "Hexagram"
+            """
             if len(define_shape) == 3:
                 cv2.drawContours(img, [shape], 0, (0, 255, 255), 5)
                 cv2.putText(img, f'Triangle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2) 
@@ -104,111 +116,9 @@ class Detection:
             else:
                 cv2.drawContours(img, [shape], 0, BGR_COLORS["BLACK"], 5)
                 cv2.putText(img, f'Circle, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 2)
-                
-                
-    
-        
-
-class ColorDetector:
-    def __init__(self):
-        self. _range_spectrum = 15
-    
-    
-    def get_color(self, img:cv2.typing.MatLike, shape:List) -> str:
-        """Identifying the color of the found shapes
-
-        Args:
-            img (cv2.typing.MatLike): The image with shapes
-            shape (List): Shapes found within the image
-
-        Returns:
-            str: The color of the shape. Empty string, otherwise.
-        """        
-        
-        mask = np.zeros(img.shape[:2], dtype="uint8")
-        cv2.drawContours(mask, [shape], -1, 255, -1)
-        rgb_values_float = cv2.mean(img, mask=mask)[:3]
-        rgb_values_int = np.array([[rgb_values_float]], dtype=np.uint8)
-        hsv_value = cv2.cvtColor(rgb_values_int, cv2.COLOR_BGR2HSV)
-        
-        print(hsv_value)
-        rgb_values =rgb_values_float
-        
-        detected_color = ""
-        for name_color, values_color in BGR_COLORS.items():
-            limits_lower, limits_upper = self.get_limits_hsv(values_color)
-            
-            mask_color_lower = cv2.inRange(hsv_value, limits_lower[0], limits_lower[1])
-            mask_color_upper = cv2.inRange(hsv_value, limits_upper[0], limits_upper[1])
-            
-            if (mask_color_lower>0) or (mask_color_upper>0):
-                detected_color = name_color
-                break
-        return detected_color
-        """
-        if 80 < rgb_values[0] < 150 and 140 < rgb_values[1] < 190 and 60 < rgb_values[2] < 140:
-            return "Green"
-        
-        elif 60 < rgb_values[0] < 200 and 90 < rgb_values[1] < 140 and 70 < rgb_values[2] < 180:
-            return "Blue"
-        
-        elif rgb_values[0] < 100 and rgb_values[1] < 100 and rgb_values[2] > 150:
-            return "Red"
-        
-        elif rgb_values[0] < 100 and rgb_values[1] > 100 and 150 < rgb_values[2]:
-            return "Orange"
-        
-        elif rgb_values[1] < 100 and rgb_values[0] > 100 and rgb_values[2] > 100:
-            return "Violet"
-        
-        else:
-            return "" # Unknown Color
-        """
-        
-    
-    
-    def get_limits_hsv(self, color_bgr:List[int]):
-        color = np.array([[color_bgr]], dtype=np.uint8)
-        hsv_color = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
-        hue = hsv_color[0][0][0]
-        hue_limits_lower = self._get_hue_limits_lower(int(hue))
-        hue_limits_upper = self._get_hue_limits_upper(int(hue))
-        limit_array_1 = self._get_limits_array(hue_limits_lower)
-        limit_array_2 = self._get_limits_array(hue_limits_upper)
-        """
-        lower_limit = ((hue-self._range_spectrum)%180, 100, 100)
-        upper_limit = ((hue+self._range_spectrum)%180, 255, 255)
-    
-        # if  range_spectrum causes overflow
-        hue_int = int(hue)
-        if (hue_int-self._range_spectrum < 0) or (hue_int+self._range_spectrum > 180):
-            temp = lower_limit
-            lower_limit = upper_limit
-            upper_limit = temp
-        """
-        
-        return limit_array_1, limit_array_2
-    
-    def _get_hue_limits_lower(self, hue:int)->Tuple[np.uint8, np.uint8]:
-        lower_limit_1 = (hue-self._range_spectrum)%180
-        lower_limit_2 = hue
-        if (hue-self._range_spectrum < 0):
-            lower_limit_2 = 180
-        return lower_limit_1, lower_limit_2
-    
-    
-    def _get_hue_limits_upper(self, hue:int)->Tuple[np.uint8, np.uint8]:
-        upper_limit_1 = hue
-        upper_limit_2 = (hue+self._range_spectrum)%180
-        if (hue+self._range_spectrum > 180):
-            upper_limit_1 = 0
-        return upper_limit_1, upper_limit_2
-    
-    
-    def _get_limits_array(self, hue:Tuple[int, int]):
-        lim1 = np.array([hue[0], 100, 100], dtype=np.uint8)
-        lim2 = np.array([hue[1], 255, 255], dtype=np.uint8)
-        return lim1, lim2
+            """
+            cv2.drawContours(img, [shape], 0, BGR_COLORS["CYAN"], 5)
+            cv2.putText(img, f'{shape_name}, {shape_color}', (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, BGR_COLORS["BLACK"], 2) 
 
 
 
