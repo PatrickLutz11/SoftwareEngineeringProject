@@ -199,7 +199,7 @@ class DetectionController:
         """Process images from the data stream and perform object detection.
 
         Args:
-            mode: Current detection mode ("CAMERA" or "IMAGE").
+            mode (str): Current detection mode ("CAMERA" or "IMAGE").
         """
         self.update_status_callback(f"Status: {mode} detection started.")
         frame_count = 0
@@ -226,19 +226,12 @@ class DetectionController:
         self._cleanup_detection(mode)
 
     def _process_frame(self, img: Any, frame_count: int, mode: str) -> None:
-        """_summary_
-
-        Args:
-            img (Any): _description_
-            frame_count (int): _description_
-            mode (str): _description_
-        """
         """Process a single frame for object detection.
         
         Args:
-            img: Image data to process.
-            frame_count: Current frame number.
-            mode: Current detection mode.
+            img Any: Image data to process.
+            frame_count (int): Current frame number.
+            mode (str): Current detection mode.
         """
         try:
             # set Image Name
@@ -256,9 +249,7 @@ class DetectionController:
             
             # Image processing
             processed_img = PictureModifications.resize_the_picture(img)
-            
-
-            
+             
             # Detect shapes
             shapes = Detection.shape_detection(img)
             recognized = Detection.shape_recognition(shapes, img)
@@ -279,15 +270,10 @@ class DetectionController:
             print(f"General error in _process_frame: {e}")
 
     def _cleanup_detection(self, mode: str) -> None:
-        """_summary_
-
-        Args:
-            mode (str): _description_
-        """
         """Clean up after detection is complete.
 
         Args:
-            mode: Current detection mode.
+            mode (str): Current detection mode.
         """
         try:
             stream = self.data_selector.get_stream()

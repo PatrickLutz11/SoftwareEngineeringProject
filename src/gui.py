@@ -29,12 +29,11 @@ class ObjectPatternRecognizerGUI:
     """
 
     def __init__(self, master: tk.Tk) -> None:
-        """_summary_
+        """Initialize the GUI.
 
         Args:
-            master (tk.Tk): _description_
+            master (tk.Tk): main application window.
         """
-        """Initialize the GUI."""
         self.master = master
         self.master.title("Object Pattern Recognizer")
 
@@ -285,32 +284,20 @@ class ObjectPatternRecognizerGUI:
             self.toggle_button.state(['!disabled'])
 
     def collect_images(self, img: cv2.typing.MatLike, image_path: str = "") -> None:
-        """_summary_
-
-        Args:
-            img (cv2.typing.MatLike): _description_
-            image_path (str, optional): _description_. Defaults to "".
-        """
         """Queue image collection for GUI thread.
-
         Args:
-            img: The image to be collected.
-            image_path: Path of the image file.
+            img (cv2.typing.MatLike): The image to be collected.
+            image_path (str, optional): Path of the image file. Defaults to "".
         """
+
         self.master.after(0, self._collect_images, img, image_path)
 
     def _collect_images(self, img: cv2.typing.MatLike, image_path: str = "") -> None:
-        """_summary_
-
-        Args:
-            img (cv2.typing.MatLike): _description_
-            image_path (str, optional): _description_. Defaults to "".
-        """
         """Process and store collected images.
 
         Args:
-            img: The image to be processed.
-            image_path: Path of the image file.
+            img (cv2.typing.MatLike): The image to be processed.
+            image_path (str, optional): Path of the image file. Defaults to "".
         """
         try:
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -337,12 +324,12 @@ class ObjectPatternRecognizerGUI:
             print(f"Error in collect_images: {e}")
 
     def on_slider_change(self, event: Any) -> None:
-        """_summary_
+        """Handle slider value changes.
 
         Args:
-            event (Any): _description_
+            event (Any): Event Object.
         """
-        """Handle slider value changes."""
+
         new_index = int(float(self.image_slider.get()))
         if new_index != self.current_image_index:
             self.current_image_index = new_index
@@ -409,29 +396,20 @@ class ObjectPatternRecognizerGUI:
         self.image_slider.set(self.current_image_index)
 
     def on_window_resize(self, event: tk.Event) -> None:
-        """_summary_
-
-        Args:
-            event (tk.Event): _description_
-        """
         """Handle window resize events.
 
         Args:
-            event: The resize event.
+            event (tk.Event): The event object.
         """
         self.update_displayed_image()
 
     def update_status(self, message: str) -> None:
-        """_summary_
-
-        Args:
-            message (str): _description_
-        """
         """Update the status label text.
 
         Args:
-            message: The status message to display.
+            message (str): The message to display in the status label.
         """
+
         self.status_label.config(text=message)
 
         # Re-enable toggle button when detection is completed or stopped
