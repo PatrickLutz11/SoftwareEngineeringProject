@@ -7,7 +7,7 @@ from data_selector import DataSelector
 from data_streams import DataStream
 from logger import Logger
 from picture_modifications import PictureModifications
-from shape_detection import Detection
+from detection_shape import Detection
 
 
 class DetectionController:
