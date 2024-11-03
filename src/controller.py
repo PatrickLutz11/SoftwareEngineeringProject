@@ -56,7 +56,7 @@ class DetectionController:
         self.running = False
         self.detection_thread: Optional[threading.Thread] = None
         self.stop_event = threading.Event()
-        self.logger = Logger(file_path=log_file_path)
+        self.logger = Logger(base_file_path=log_file_path)
         self.data_selector = None
         self.stream = None
         
@@ -222,18 +222,16 @@ class DetectionController:
 
     def _process_frame(self, img: Any, frame_count: int, mode: str) -> None:
         """Process a single frame for object detection.
-
         Args:
             img: Image data to process.
             frame_count: Current frame number.
             mode: Current detection mode.
         """
+        self.logger.set_current_image(f"image_{frame_count}")
         shapes = Detection.shape_detection(img)
         recognized = Detection.shape_recognition(shapes, img)
-        
         img = PictureModifications.resize_the_picture(img)
         self.show_image_callback(img)
-
         for shape in recognized:
             try:
                 self.logger.log_data(
