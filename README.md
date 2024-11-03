@@ -75,7 +75,8 @@ The GUI is the window of the programm for the user to interact with.
 It contains a live camera feed and Image detection from a folder to choose.
 There is a button to start the detection in IMAGE- and CAMERA-mode and a button to stop the detection in the CAMERA-mode.
 After the detection is finished, the GUI will show the detected shapes and their colors on the processed images withe the option to switch petweeen the images with buttons and a slider.
-![image info](./doc/GUI.jpg)
+
+<img src="./doc/GUI.jpg" alt="drawing" width="600"/>
 
 ## Credits
 Authors: Jannis Mathiuet, David Meister, Patrick Lutz
