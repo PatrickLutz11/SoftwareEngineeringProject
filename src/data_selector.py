@@ -69,9 +69,14 @@ class DataSelector:
             List[str]: List of image names. Empty, otherwise.
         """
         return stream.image_tuple[1]
+    
+    
+
 if __name__ == "__main__":
+    """Testing of data selector functions
+    """
     import cv2
-    selector = DataSelector("i", R"C:\Users\janni\Downloads\out") # must be absolute path
+    selector = DataSelector("i", "in") # must be absolute path
     
     selector.select_stream('i') # 'c' or 'i'
     stream = selector.get_stream()
