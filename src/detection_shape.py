@@ -1,13 +1,16 @@
 import cv2
-import numpy as np
 from typing import List, Dict, Tuple
+from abc import abstractmethod
 
-from config_reader_test import ConfigReader
+from handling_configurations import ConfigReader
 from detection_color import ColorDetector
 
-BGR_COLORS = ConfigReader().get_bgr_color_dict()
+BGR_COLORS = ConfigReader("config.json").get_value('BGR_COLORS')
+
 
 class Detection:
+    """Functions to detect shape and recognize it"""
+    @abstractmethod
     def shape_detection(img:cv2.typing.MatLike, ratio_image_to_shape:int=100) -> List:
         """Shape detection from the image
 
@@ -25,7 +28,6 @@ class Detection:
         minimum_area_for_shape = int(area_of_img/ratio_image_to_shape)
 
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
-        
         thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
         
         contours, _ = cv2.findContours(thresholded, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -48,7 +50,7 @@ class Detection:
         
         return filtered_shapes 
 
-            
+    @abstractmethod
     def shape_recognition(found_shapes:List, img:cv2.typing.MatLike) -> List[Dict[str, str]]:
         """Identification of found shapes
 
@@ -77,10 +79,10 @@ class Detection:
                     shape_name = "Rectangle"
             
             if len(define_shape) == 5:
-                shape_name = "Pentacle"
+                shape_name = "Pentagon"
             
             if len(define_shape) == 6:
-                shape_name = "Hexagram"
+                shape_name = "Hexagon"
             
             
             cv2.drawContours(img, [shape], 0, BGR_COLORS["CYAN"], 5)
@@ -90,7 +92,6 @@ class Detection:
             img = TextPlacer.place_text(img, text, coords_text)
             
             recognized_shapes.append({'pattern': shape_name, 'color': shape_color})
-        print(f"\r\n\n")
         return recognized_shapes
     
 
