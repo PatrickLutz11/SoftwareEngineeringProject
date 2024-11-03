@@ -120,19 +120,19 @@ class FileHandling():
         
         path = self.path_input
         items = []
-        filepaths = [] 
+        filenames = [] 
         for root, dirs, files in os.walk(path):
                 for f in files: 
                     if search_term is None or search_term in str(f): 
                         filepath = os.path.join(path, str(f))
                         item = self.open_one_file(filepath)
                         items.append(item)
-                        filepaths.append(filepath)
+                        filenames.append(f)
                 if (subfolderCheck is False): 
                     break
         if not items: 
             print("ERROR: No files found")
-        return (items, filepaths)
+        return (items, filenames)
     
     
     def open_one_file(self, path_file:str):

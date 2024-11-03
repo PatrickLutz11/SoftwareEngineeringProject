@@ -103,3 +103,12 @@ class FolderStream(DataStream):
         self.image_list = []
         self._id_image = 0
         return True
+    
+    def get_names_images_list(self) -> List[str]:
+        """
+        Get name of opened images.
+
+        Returns:
+            List[str]: List of image names.
+        """
+        return self.image_list[1]
