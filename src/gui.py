@@ -14,7 +14,7 @@ from handling_configurations import ConfigReader, ConfigWriter
 
 class ObjectPatternRecognizerGUI:
     """GUI class for the Object Pattern Recognizer application.
-    
+
     This class implements the graphical user interface for the object pattern
     recognition application. It provides controls for switching between camera and
     image modes, starting/stopping detection, and displaying detected patterns.
@@ -34,7 +34,7 @@ class ObjectPatternRecognizerGUI:
         self.master.title("Object Pattern Recognizer")
 
         # Configure grid layout
-        self.master.rowconfigure(5, weight=1)
+        self.master.rowconfigure(5, weight=1)  # Image frame gets all extra space
         self.master.columnconfigure(0, weight=1)
 
         # Initialize config handling
@@ -58,8 +58,8 @@ class ObjectPatternRecognizerGUI:
         # Create UI elements
         self._create_mode_frame()
         self._create_path_frame()
-        self._create_button_frame()
-        self._create_labels()
+        self._create_control_frame()
+        self._create_status_label()
         self._create_image_frame()
 
         # Initialize controller
@@ -72,7 +72,7 @@ class ObjectPatternRecognizerGUI:
 
         # Initialize widget states
         self.update_button_state()
-        
+
         # Bind window resize event
         self.master.bind('<Configure>', self.on_window_resize)
 
@@ -105,7 +105,7 @@ class ObjectPatternRecognizerGUI:
             textvariable=self.image_path
         )
         self.path_entry.pack(side=tk.LEFT, expand=True, fill="x", padx=5, pady=5)
-        
+
         self.browse_button = ttk.Button(
             self.path_frame,
             text="Browse",
@@ -113,45 +113,20 @@ class ObjectPatternRecognizerGUI:
         )
         self.browse_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-    def _create_button_frame(self) -> None:
-        """Create the frame containing control buttons."""
-        button_frame = ttk.Frame(self.master)
-        button_frame.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
+    def _create_control_frame(self) -> None:
+        """Create the frame containing the start/stop button."""
+        control_frame = ttk.Frame(self.master)
+        control_frame.grid(row=2, column=0, padx=10, pady=5, sticky="ew")
 
         self.toggle_button = ttk.Button(
-            button_frame,
+            control_frame,
             text="Start Detection",
             command=self.toggle_detection
         )
         self.toggle_button.pack(side=tk.LEFT, padx=5)
 
-        # Navigation buttons (initially hidden)
-        self.prev_button = ttk.Button(
-            button_frame,
-            text="Previous",
-            command=self.show_previous_image
-        )
-        self.next_button = ttk.Button(
-            button_frame,
-            text="Next",
-            command=self.show_next_image
-        )
-
-    def _create_labels(self) -> None:
-        """Create status and image name labels."""
-        self.image_name_label = ttk.Label(
-            self.master,
-            text="",
-            anchor="center"
-        )
-        self.image_name_label.grid(
-            row=3,
-            column=0,
-            padx=10,
-            pady=5,
-            sticky="ew"
-        )
-
+    def _create_status_label(self) -> None:
+        """Create the status label."""
         self.status_label = ttk.Label(
             self.master,
             text="Status: Ready"
@@ -166,15 +141,22 @@ class ObjectPatternRecognizerGUI:
 
     def _create_image_frame(self) -> None:
         """Create the frame for displaying images."""
-        self.image_frame = ttk.Frame(self.master)
-        self.image_frame.grid(row=5, column=0, sticky="nsew")
+        # Main container for image and navigation
+        main_container = ttk.Frame(self.master)
+        main_container.grid(row=5, column=0, sticky="nsew")
+        main_container.rowconfigure(0, weight=1)
+        main_container.columnconfigure(0, weight=1)
+
+        # Image frame (gets all extra space)
+        self.image_frame = ttk.Frame(main_container)
+        self.image_frame.grid(row=0, column=0, sticky="nsew")
         self.image_frame.rowconfigure(0, weight=1)
         self.image_frame.columnconfigure(0, weight=1)
 
+        # Create canvas and scrollbars
         self.canvas = tk.Canvas(self.image_frame, bg="grey")
         self.canvas.grid(row=0, column=0, sticky="nsew")
 
-        # Add scrollbars
         self.v_scrollbar = ttk.Scrollbar(
             self.image_frame,
             orient=tk.VERTICAL,
@@ -194,6 +176,50 @@ class ObjectPatternRecognizerGUI:
             xscrollcommand=self.h_scrollbar.set
         )
 
+        # Navigation frame (fixed at bottom)
+        self.navigation_frame = ttk.Frame(main_container)
+        self.navigation_frame.grid(row=1, column=0, sticky="ew", pady=5)
+        self.navigation_frame.grid_remove()  # Initially hidden
+
+        # Create button frame inside navigation frame
+        button_frame = ttk.Frame(self.navigation_frame)
+        button_frame.pack(fill="x", pady=5)
+
+        # Add Previous and Next buttons with image label between them
+        self.prev_button = ttk.Button(
+            button_frame,
+            text="Previous",
+            command=self.show_previous_image
+        )
+        self.prev_button.pack(side=tk.LEFT, padx=5)
+
+        self.image_name_label = ttk.Label(
+            button_frame,
+            text="",
+            anchor="center"
+        )
+        self.image_name_label.pack(side=tk.LEFT, expand=True)
+
+        self.next_button = ttk.Button(
+            button_frame,
+            text="Next",
+            command=self.show_next_image
+        )
+        self.next_button.pack(side=tk.LEFT, padx=5)
+
+        # Create slider frame inside navigation frame
+        slider_frame = ttk.Frame(self.navigation_frame)
+        slider_frame.pack(fill="x", pady=5)
+
+        self.image_slider = ttk.Scale(
+            slider_frame,
+            from_=0,
+            to=0,
+            orient=tk.HORIZONTAL,
+            command=self.on_slider_change
+        )
+        self.image_slider.pack(fill="x", padx=5)
+
     def update_button_state(self) -> None:
         """Update widget states based on current mode."""
         if self.mode.get() == "IMAGE":
@@ -201,7 +227,7 @@ class ObjectPatternRecognizerGUI:
             self.path_frame.columnconfigure(0, weight=1)
         else:
             self.path_frame.grid_remove()
-        
+
         self.toggle_button.config(text="Start Detection")
         self.toggle_button.state(['!disabled'])
 
@@ -231,8 +257,7 @@ class ObjectPatternRecognizerGUI:
         self.current_image_index = 0
         self.canvas.delete("all")
         self.image_name_label.config(text="")
-        self.prev_button.pack_forget()
-        self.next_button.pack_forget()
+        self.navigation_frame.grid_remove()
 
         # Start detection with controller
         self.controller.start_detection()
@@ -269,14 +294,16 @@ class ObjectPatternRecognizerGUI:
             img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             pil_image = Image.fromarray(img_rgb)
             self.original_img_pil_list.append((pil_image, image_path))
-            
-            # Show navigation buttons if we have multiple images
-            if len(self.original_img_pil_list) > 1:
-                self.prev_button.pack(side=tk.LEFT, padx=5)
-                self.next_button.pack(side=tk.LEFT, padx=5)
-            
+
+            # Show navigation frame if we have images
+            if len(self.original_img_pil_list) > 0:
+                self.navigation_frame.grid()
+
+            # Update the slider range
+            self.image_slider.config(to=len(self.original_img_pil_list) - 1)
+
             # Update display for first image or if viewing latest
-            if (len(self.original_img_pil_list) == 1 or 
+            if (len(self.original_img_pil_list) == 1 or
                 self.current_image_index == len(self.original_img_pil_list) - 2):
                 self.current_image_index = len(self.original_img_pil_list) - 1
                 self.update_displayed_image()
@@ -284,6 +311,13 @@ class ObjectPatternRecognizerGUI:
         except Exception as e:
             self.update_status(f"Error in collect_images: {e}")
             print(f"Error in collect_images: {e}")
+
+    def on_slider_change(self, event: Any) -> None:
+        """Handle slider value changes."""
+        new_index = int(float(self.image_slider.get()))
+        if new_index != self.current_image_index:
+            self.current_image_index = new_index
+            self.update_displayed_image()
 
     def show_previous_image(self) -> None:
         """Display the previous image in the list."""
@@ -308,9 +342,9 @@ class ObjectPatternRecognizerGUI:
             self.current_image_index
         ]
         total_images = len(self.original_img_pil_list)
-        
+
         # Update image name and counter
-        image_name = (os.path.basename(image_path) if image_path 
+        image_name = (os.path.basename(image_path) if image_path
                      else f"Image {self.current_image_index + 1}")
         counter_text = (f"Current Image: {image_name} "
                        f"({self.current_image_index + 1}/{total_images})")
@@ -335,6 +369,9 @@ class ObjectPatternRecognizerGUI:
         self.canvas.create_image(0, 0, anchor=tk.NW, image=self.img_tk)
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
 
+        # Update the slider value
+        self.image_slider.set(self.current_image_index)
+
     def on_window_resize(self, event: tk.Event) -> None:
         """Handle window resize events.
 
@@ -356,8 +393,3 @@ class ObjectPatternRecognizerGUI:
             self.toggle_button.config(text="Start Detection")
             self.toggle_button.state(['!disabled'])
 
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ObjectPatternRecognizerGUI(master=root)
-    root.mainloop()
