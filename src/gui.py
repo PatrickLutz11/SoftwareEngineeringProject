@@ -29,6 +29,11 @@ class ObjectPatternRecognizerGUI:
     """
 
     def __init__(self, master: tk.Tk) -> None:
+        """_summary_
+
+        Args:
+            master (tk.Tk): _description_
+        """
         """Initialize the GUI."""
         self.master = master
         self.master.title("Object Pattern Recognizer")
@@ -279,7 +284,13 @@ class ObjectPatternRecognizerGUI:
             self.toggle_button.config(text="Start Detection")
             self.toggle_button.state(['!disabled'])
 
-    def collect_images(self, img: Any, image_path: str = "") -> None:
+    def collect_images(self, img: cv2.typing.MatLike, image_path: str = "") -> None:
+        """_summary_
+
+        Args:
+            img (cv2.typing.MatLike): _description_
+            image_path (str, optional): _description_. Defaults to "".
+        """
         """Queue image collection for GUI thread.
 
         Args:
@@ -288,7 +299,13 @@ class ObjectPatternRecognizerGUI:
         """
         self.master.after(0, self._collect_images, img, image_path)
 
-    def _collect_images(self, img: Any, image_path: str = "") -> None:
+    def _collect_images(self, img: cv2.typing.MatLike, image_path: str = "") -> None:
+        """_summary_
+
+        Args:
+            img (cv2.typing.MatLike): _description_
+            image_path (str, optional): _description_. Defaults to "".
+        """
         """Process and store collected images.
 
         Args:
@@ -320,6 +337,11 @@ class ObjectPatternRecognizerGUI:
             print(f"Error in collect_images: {e}")
 
     def on_slider_change(self, event: Any) -> None:
+        """_summary_
+
+        Args:
+            event (Any): _description_
+        """
         """Handle slider value changes."""
         new_index = int(float(self.image_slider.get()))
         if new_index != self.current_image_index:
@@ -387,6 +409,11 @@ class ObjectPatternRecognizerGUI:
         self.image_slider.set(self.current_image_index)
 
     def on_window_resize(self, event: tk.Event) -> None:
+        """_summary_
+
+        Args:
+            event (tk.Event): _description_
+        """
         """Handle window resize events.
 
         Args:
@@ -395,6 +422,11 @@ class ObjectPatternRecognizerGUI:
         self.update_displayed_image()
 
     def update_status(self, message: str) -> None:
+        """_summary_
+
+        Args:
+            message (str): _description_
+        """
         """Update the status label text.
 
         Args:

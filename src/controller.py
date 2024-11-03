@@ -226,6 +226,13 @@ class DetectionController:
         self._cleanup_detection(mode)
 
     def _process_frame(self, img: Any, frame_count: int, mode: str) -> None:
+        """_summary_
+
+        Args:
+            img (Any): _description_
+            frame_count (int): _description_
+            mode (str): _description_
+        """
         """Process a single frame for object detection.
         
         Args:
@@ -272,6 +279,11 @@ class DetectionController:
             print(f"General error in _process_frame: {e}")
 
     def _cleanup_detection(self, mode: str) -> None:
+        """_summary_
+
+        Args:
+            mode (str): _description_
+        """
         """Clean up after detection is complete.
 
         Args:
