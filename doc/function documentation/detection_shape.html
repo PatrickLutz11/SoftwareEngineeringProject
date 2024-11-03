@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module detection_shape</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">detection_shape</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Cdetection_shape.py">c:\fhgr\softwareengineeringproject\src\detection_shape.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cv2.html">cv2</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="detection_shape.html#Detection">Detection</a>
+</dt><dt class="heading-text"><a href="detection_shape.html#FilterShapes">FilterShapes</a>
+</dt><dt class="heading-text"><a href="detection_shape.html#OperationShapes">OperationShapes</a>
+</dt><dt class="heading-text"><a href="detection_shape.html#TextPlacer">TextPlacer</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="Detection">class <strong>Detection</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Functions&nbsp;to&nbsp;detect&nbsp;shape&nbsp;and&nbsp;recognize&nbsp;it<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="Detection-shape_detection"><strong>shape_detection</strong></a>(img: Union[cv2.Mat, numpy.ndarray], ratio_image_to_shape: int = 100) -&gt; List</dt><dd><span class="code">Shape&nbsp;detection&nbsp;from&nbsp;the&nbsp;image<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;The&nbsp;image&nbsp;with&nbsp;shapes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ratio_image_to_shape&nbsp;(float):&nbsp;Ratio&nbsp;of&nbsp;image&nbsp;to&nbsp;shape,&nbsp;i.e.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;how&nbsp;many&nbsp;times&nbsp;the&nbsp;image&nbsp;is&nbsp;bigger&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;than&nbsp;the&nbsp;shape.&nbsp;Defaults&nbsp;to&nbsp;100.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List:&nbsp;The&nbsp;shapes&nbsp;within&nbsp;the&nbsp;image</span></dd></dl>
+
+<dl><dt><a name="Detection-shape_recognition"><strong>shape_recognition</strong></a>(found_shapes: List, img: Union[cv2.Mat, numpy.ndarray]) -&gt; List[Dict[str, str]]</dt><dd><span class="code">Identification&nbsp;of&nbsp;found&nbsp;shapes<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;found_shapes&nbsp;(List):&nbsp;List&nbsp;of&nbsp;found&nbsp;shapes&nbsp;within&nbsp;the&nbsp;image<br>
+&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;The&nbsp;image&nbsp;with&nbsp;shapes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List[Dict[str,&nbsp;str]]:&nbsp;List&nbsp;of&nbsp;recognized&nbsp;shapes&nbsp;with&nbsp;pattern&nbsp;and&nbsp;color</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="FilterShapes">class <strong>FilterShapes</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="FilterShapes-minimum_center_distance"><strong>minimum_center_distance</strong></a>(found_shapes: List[Union[cv2.Mat, numpy.ndarray]], miniumum_distance: int = 2) -&gt; List[Union[cv2.Mat, numpy.ndarray]]</dt><dd><span class="code">Apply&nbsp;minimum&nbsp;center&nbsp;distance&nbsp;filter&nbsp;onto&nbsp;shapes.<br>
+Shapes&nbsp;with&nbsp;smaller&nbsp;center&nbsp;distance&nbsp;will&nbsp;be&nbsp;removed.&nbsp;<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;found_shapes&nbsp;(List[cv2.typing.MatLike]):&nbsp;List&nbsp;of&nbsp;shapes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;miniumum_distance&nbsp;(int,&nbsp;optional):&nbsp;Minimum&nbsp;distance&nbsp;which&nbsp;needs&nbsp;to&nbsp;be&nbsp;exceeded.&nbsp;Defaults&nbsp;to&nbsp;2.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List[cv2.typing.MatLike]:&nbsp;List&nbsp;of&nbsp;filtered&nbsp;shapes.&nbsp;Empty,&nbsp;otherwise.</span></dd></dl>
+
+<dl><dt><a name="FilterShapes-minimum_shape_size"><strong>minimum_shape_size</strong></a>(found_shapes: List[Union[cv2.Mat, numpy.ndarray]], minimum_area_for_shape: int) -&gt; List[Union[cv2.Mat, numpy.ndarray]]</dt><dd><span class="code">Apply&nbsp;minimum&nbsp;area&nbsp;shape&nbsp;filter&nbsp;onto&nbsp;shapes.<br>
+Shapes&nbsp;with&nbsp;smaller&nbsp;area&nbsp;will&nbsp;be&nbsp;removed.&nbsp;<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;found_shapes&nbsp;(List[cv2.typing.MatLike]):&nbsp;List&nbsp;of&nbsp;shapes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;miniumum_area_for_shape&nbsp;(int):&nbsp;required&nbsp;minimum&nbsp;area&nbsp;of&nbsp;shape<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List[cv2.typing.MatLike]:&nbsp;List&nbsp;of&nbsp;filtered&nbsp;shapes.&nbsp;Empty,&nbsp;otherwise.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="OperationShapes">class <strong>OperationShapes</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="OperationShapes-get_shape_center"><strong>get_shape_center</strong></a>(shape: Union[cv2.Mat, numpy.ndarray]) -&gt; Tuple[int, int]</dt><dd><span class="code">Get&nbsp;center&nbsp;of&nbsp;shape.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;shape&nbsp;(cv2.typing.MatLike):&nbsp;Selected&nbsp;shape&nbsp;to&nbsp;determine&nbsp;center.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tuple[int,&nbsp;int]:&nbsp;Coordinates&nbsp;of&nbsp;shape&nbsp;center.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="TextPlacer">class <strong>TextPlacer</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor"><span class="code">&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="TextPlacer-place_text"><strong>place_text</strong></a>(img: Union[cv2.Mat, numpy.ndarray], text: str, coords_text: Tuple[int, int]) -&gt; Union[cv2.Mat, numpy.ndarray]</dt><dd><span class="code">Places&nbsp;text&nbsp;onto&nbsp;image&nbsp;at&nbsp;given&nbsp;coordinates.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;Image,&nbsp;onto&nbsp;which&nbsp;text&nbsp;is&nbsp;placed.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;text&nbsp;(str):&nbsp;Text,&nbsp;which&nbsp;should&nbsp;be&nbsp;placed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;coords_text&nbsp;(Tuple[int,&nbsp;int]):&nbsp;coordinates&nbsp;of&nbsp;text&nbsp;center.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv2.typing.MatLike:&nbsp;Image&nbsp;with&nbsp;placed&nbsp;text.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>BGR_COLORS</strong> = None<br>
+<strong>Dict</strong> = typing.Dict<br>
+<strong>List</strong> = typing.List<br>
+<strong>Tuple</strong> = typing.Tuple</td></tr></table>
+</body></html>

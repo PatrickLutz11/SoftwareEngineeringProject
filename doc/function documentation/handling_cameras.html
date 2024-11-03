@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module handling_cameras</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">handling_cameras</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Chandling_cameras.py">c:\fhgr\softwareengineeringproject\src\handling_cameras.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="cv2.html">cv2</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="handling_cameras.html#CameraOperator">CameraOperator</a>
+</dt><dt class="heading-text"><a href="handling_cameras.html#CameraSearch">CameraSearch</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="CameraOperator">class <strong>CameraOperator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#CameraOperator">CameraOperator</a>(_camera_device_port:&nbsp;int&nbsp;=&nbsp;0)&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+Functions&nbsp;to&nbsp;operate&nbsp;camera<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="CameraOperator-__init__"><strong>__init__</strong></a>(self, _camera_device_port: int = 0) -&gt; None</dt><dd><span class="code">Initialize&nbsp;camera&nbsp;operator<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_camera_device_port&nbsp;(int,&nbsp;optional):&nbsp;Device&nbsp;port&nbsp;of&nbsp;camera.&nbsp;Defaults&nbsp;to&nbsp;0.</span></dd></dl>
+
+<dl><dt><a name="CameraOperator-close_camera_stream"><strong>close_camera_stream</strong></a>(self) -&gt; bool</dt><dd><span class="code">closes&nbsp;camera&nbsp;stream.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;_True,&nbsp;if&nbsp;successful.&nbsp;False,&nbsp;otherwise.</span></dd></dl>
+
+<dl><dt><a name="CameraOperator-get_image_camera"><strong>get_image_camera</strong></a>(self) -&gt; Union[cv2.Mat, numpy.ndarray]</dt><dd><span class="code">get&nbsp;image/frame&nbsp;of&nbsp;camera&nbsp;and&nbsp;returns&nbsp;it.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv2.typing.MatLike:&nbsp;Image&nbsp;of&nbsp;camera.&nbsp;None,&nbsp;oterwise.</span></dd></dl>
+
+<dl><dt><a name="CameraOperator-open_camera_stream"><strong>open_camera_stream</strong></a>(self) -&gt; bool</dt><dd><span class="code">opens&nbsp;camera&nbsp;stream.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True,&nbsp;if&nbsp;successful.&nbsp;False,&nbsp;otherwise.</span></dd></dl>
+
+<dl><dt><a name="CameraOperator-select_camera_device"><strong>select_camera_device</strong></a>(self) -&gt; bool</dt><dd><span class="code">Users&nbsp;can&nbsp;select&nbsp;from&nbsp;found&nbsp;camera&nbsp;devices.&nbsp;<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True,&nbsp;if&nbsp;successful.&nbsp;False,&nbsp;otherwise.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="CameraSearch">class <strong>CameraSearch</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Function&nbsp;to&nbsp;search&nbsp;system&nbsp;for&nbsp;all&nbsp;avaiable&nbsp;cameras.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="CameraSearch-list_camera_devices"><strong>list_camera_devices</strong></a>() -&gt; List[int]</dt><dd><span class="code">checks&nbsp;system&nbsp;for&nbsp;avaiable&nbsp;and&nbsp;working&nbsp;device&nbsp;ports.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List:&nbsp;list&nbsp;of&nbsp;avaiable&nbsp;ports&nbsp;(integer).&nbsp;Empty,&nbsp;otherwise.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-main"><strong>main</strong></a>()</dt></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>List</strong> = typing.List</td></tr></table>
+</body></html>
