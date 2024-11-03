@@ -22,7 +22,7 @@ class Detection:
         """
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
         area_of_img = gray_img.shape[0]*gray_img.shape[1]
-        miniumum_area_for_shape = int(area_of_img/ratio_image_to_shape)
+        minimum_area_for_shape = int(area_of_img/ratio_image_to_shape)
 
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
         
@@ -32,7 +32,7 @@ class Detection:
         found_shapes = sorted(contours, key=cv2.contourArea, reverse=True)[1:] # excluding background
         
         filtered_shapes = FilterShapes.minimum_shape_size(found_shapes, 
-                                                          miniumum_area_for_shape)
+                                                          minimum_area_for_shape)
         filtered_shapes = FilterShapes.minimum_center_distance(filtered_shapes,
                                                                miniumum_distance=2)
         
@@ -97,12 +97,23 @@ class Detection:
 class FilterShapes:
     @staticmethod
     def minimum_shape_size(found_shapes:List[cv2.typing.MatLike], 
-                                  miniumum_area_for_shape:int
+                                  minimum_area_for_shape:int
                                   )->List[cv2.typing.MatLike]:
+        """
+        Apply minimum area shape filter onto shapes.
+        Shapes with smaller area will be removed. 
+        
+        Args:
+            found_shapes (List[cv2.typing.MatLike]): List of shapes
+            miniumum_area_for_shape (int): required minimum area of shape
+
+        Returns:
+            List[cv2.typing.MatLike]: List of filtered shapes. Empty, otherwise.
+        """
         filtered_found_shapes = []
         for shape in found_shapes:
             area = cv2.contourArea(shape)
-            if miniumum_area_for_shape > area:
+            if minimum_area_for_shape > area:
                 break
             filtered_found_shapes.append(shape)
         return filtered_found_shapes
@@ -111,6 +122,17 @@ class FilterShapes:
     def minimum_center_distance(found_shapes:List[cv2.typing.MatLike], 
                                       miniumum_distance:int=2
                                       )->List[cv2.typing.MatLike]:
+        """
+        Apply minimum center distance filter onto shapes.
+        Shapes with smaller center distance will be removed. 
+
+        Args:
+            found_shapes (List[cv2.typing.MatLike]): List of shapes
+            miniumum_distance (int, optional): Minimum distance which needs to be exceeded. Defaults to 2.
+
+        Returns:
+            List[cv2.typing.MatLike]: List of filtered shapes. Empty, otherwise.
+        """
         filtered_found_shapes = []
         center_points = [(0,0)]
         
@@ -133,8 +155,16 @@ class FilterShapes:
 
 class OperationShapes:
     @staticmethod
-    def get_shape_center(mask_shape:cv2.typing.MatLike)->Tuple[int, int]:
-        shape_points = cv2.moments(mask_shape) 
+    def get_shape_center(shape:cv2.typing.MatLike)->Tuple[int, int]:
+        """Get center of shape.
+
+        Args:
+            shape (cv2.typing.MatLike): Selected shape to determine center.
+
+        Returns:
+            Tuple[int, int]: Coordinates of shape center.
+        """
+        shape_points = cv2.moments(shape) 
         x_coord = 0
         y_coord = 0
         if shape_points['m00'] != 0.0: 
@@ -147,6 +177,17 @@ class TextPlacer:
     @staticmethod
     def place_text(img:cv2.typing.MatLike, text:str, 
                    coords_text:Tuple[int, int])->cv2.typing.MatLike:
+        """
+        Places text onto image at given coordinates.
+
+        Args:
+            img (cv2.typing.MatLike): Image, onto which text is placed.
+            text (str): Text, which should be placed
+            coords_text (Tuple[int, int]): coordinates of text center.
+
+        Returns:
+            cv2.typing.MatLike: Image with placed text. 
+        """
         font = {
                 'face' : cv2.FONT_HERSHEY_SIMPLEX,
                 'scale' : 0.8,
