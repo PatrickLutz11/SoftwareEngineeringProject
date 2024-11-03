@@ -92,7 +92,6 @@ class Detection:
             img = TextPlacer.place_text(img, text, coords_text)
             
             recognized_shapes.append({'pattern': shape_name, 'color': shape_color})
-        print(f"\r\n\n")
         return recognized_shapes
     
 
