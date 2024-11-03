@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module gui</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">gui</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Cgui.py">c:\fhgr\softwareengineeringproject\src\gui.py</a></td></tr></table>
+    <p><span class="code">GUI&nbsp;module&nbsp;for&nbsp;the&nbsp;Object&nbsp;Pattern&nbsp;Recognizer&nbsp;application.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="PIL.Image.html">PIL.Image</a><br>
+<a href="PIL.ImageTk.html">PIL.ImageTk</a><br>
+</td><td class="multicolumn"><a href="cv2.html">cv2</a><br>
+<a href="tkinter.filedialog.html">tkinter.filedialog</a><br>
+</td><td class="multicolumn"><a href="tkinter.html">tkinter</a><br>
+<a href="tkinter.ttk.html">tkinter.ttk</a><br>
+</td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="gui.html#ObjectPatternRecognizerGUI">ObjectPatternRecognizerGUI</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ObjectPatternRecognizerGUI">class <strong>ObjectPatternRecognizerGUI</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#ObjectPatternRecognizerGUI">ObjectPatternRecognizerGUI</a>(master:&nbsp;tkinter.Tk)&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+GUI&nbsp;class&nbsp;for&nbsp;the&nbsp;Object&nbsp;Pattern&nbsp;Recognizer&nbsp;application.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;implements&nbsp;the&nbsp;graphical&nbsp;user&nbsp;interface&nbsp;for&nbsp;the&nbsp;<a href="builtins.html#object">object</a>&nbsp;pattern<br>
+recognition&nbsp;application.&nbsp;It&nbsp;provides&nbsp;controls&nbsp;for&nbsp;switching&nbsp;between&nbsp;camera&nbsp;and<br>
+image&nbsp;modes,&nbsp;starting/stopping&nbsp;detection,&nbsp;and&nbsp;displaying&nbsp;detected&nbsp;patterns.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;master:&nbsp;The&nbsp;root&nbsp;tkinter&nbsp;window.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode:&nbsp;StringVar&nbsp;controlling&nbsp;camera/image&nbsp;mode&nbsp;selection.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_path:&nbsp;StringVar&nbsp;storing&nbsp;the&nbsp;selected&nbsp;image&nbsp;folder&nbsp;path.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;controller:&nbsp;DetectionController&nbsp;instance&nbsp;managing&nbsp;the&nbsp;detection&nbsp;process.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;original_img_pil_list:&nbsp;List&nbsp;of&nbsp;processed&nbsp;images&nbsp;and&nbsp;their&nbsp;paths.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;current_image_index:&nbsp;Index&nbsp;of&nbsp;currently&nbsp;displayed&nbsp;image.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ObjectPatternRecognizerGUI-__init__"><strong>__init__</strong></a>(self, master: tkinter.Tk) -&gt; None</dt><dd><span class="code">_summary_<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;master&nbsp;(tk.Tk):&nbsp;_description_</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-browse_image"><strong>browse_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Open&nbsp;file&nbsp;dialog&nbsp;for&nbsp;selecting&nbsp;image&nbsp;folder&nbsp;and&nbsp;save&nbsp;the&nbsp;path.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-collect_images"><strong>collect_images</strong></a>(self, img: Union[cv2.Mat, numpy.ndarray], image_path: str = '') -&gt; None</dt><dd><span class="code">_summary_<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;img&nbsp;(cv2.typing.MatLike):&nbsp;_description_<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_path&nbsp;(str,&nbsp;optional):&nbsp;_description_.&nbsp;Defaults&nbsp;to&nbsp;"".</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-on_slider_change"><strong>on_slider_change</strong></a>(self, event: Any) -&gt; None</dt><dd><span class="code">_summary_<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;event&nbsp;(Any):&nbsp;_description_</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-on_window_resize"><strong>on_window_resize</strong></a>(self, event: tkinter.Event) -&gt; None</dt><dd><span class="code">_summary_<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;event&nbsp;(tk.Event):&nbsp;_description_</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-show_next_image"><strong>show_next_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Display&nbsp;the&nbsp;next&nbsp;image&nbsp;in&nbsp;the&nbsp;list.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-show_previous_image"><strong>show_previous_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Display&nbsp;the&nbsp;previous&nbsp;image&nbsp;in&nbsp;the&nbsp;list.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-start_detection"><strong>start_detection</strong></a>(self) -&gt; None</dt><dd><span class="code">Start&nbsp;the&nbsp;detection&nbsp;process.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-stop_detection"><strong>stop_detection</strong></a>(self) -&gt; None</dt><dd><span class="code">Stop&nbsp;the&nbsp;detection&nbsp;process.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-toggle_detection"><strong>toggle_detection</strong></a>(self) -&gt; None</dt><dd><span class="code">Toggle&nbsp;detection&nbsp;process&nbsp;on/off.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-update_button_state"><strong>update_button_state</strong></a>(self) -&gt; None</dt><dd><span class="code">Update&nbsp;widget&nbsp;states&nbsp;based&nbsp;on&nbsp;current&nbsp;mode.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-update_displayed_image"><strong>update_displayed_image</strong></a>(self) -&gt; None</dt><dd><span class="code">Update&nbsp;the&nbsp;image&nbsp;display&nbsp;and&nbsp;counter.</span></dd></dl>
+
+<dl><dt><a name="ObjectPatternRecognizerGUI-update_status"><strong>update_status</strong></a>(self, message: str) -&gt; None</dt><dd><span class="code">_summary_<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;message&nbsp;(str):&nbsp;_description_</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional<br>
+<strong>Tuple</strong> = typing.Tuple</td></tr></table>
+</body></html>

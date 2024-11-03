@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module handling_paths_files</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">handling_paths_files</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Chandling_paths_files.py">c:\fhgr\softwareengineeringproject\src\handling_paths_files.py</a></td></tr></table>
+    <p></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="PIL.Image.html">PIL.Image</a><br>
+</td><td class="multicolumn"><a href="cv2.html">cv2</a><br>
+</td><td class="multicolumn"><a href="numpy.html">numpy</a><br>
+</td><td class="multicolumn"><a href="os.html">os</a><br>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="handling_paths_files.html#FileHandling">FileHandling</a>
+</dt><dt class="heading-text"><a href="handling_paths_files.html#ImageConverter">ImageConverter</a>
+</dt><dt class="heading-text"><a href="handling_paths_files.html#IntegrityChecker">IntegrityChecker</a>
+</dt><dt class="heading-text"><a href="handling_paths_files.html#PathHandling">PathHandling</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="FileHandling">class <strong>FileHandling</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#FileHandling">FileHandling</a>(_path_input:&nbsp;str&nbsp;=&nbsp;'')<br>
+&nbsp;<br>
+Functions&nbsp;for&nbsp;handling&nbsp;files<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="FileHandling-__init__"><strong>__init__</strong></a>(self, _path_input: str = '')</dt><dd><span class="code">Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</span></dd></dl>
+
+<dl><dt><a name="FileHandling-open_all_files"><strong>open_all_files</strong></a>(self) -&gt; Tuple[List]</dt><dd><span class="code">opens&nbsp;all&nbsp;files&nbsp;in&nbsp;folder<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tuple[List]:&nbsp;Tuple&nbsp;with&nbsp;lists&nbsp;aof&nbsp;images&nbsp;and&nbsp;paths<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Tuple[0]&nbsp;cv2.typing.MatLike:&nbsp;&nbsp;images<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Tuple[1]&nbsp;str:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;paths&nbsp;of&nbsp;images</span></dd></dl>
+
+<dl><dt><a name="FileHandling-open_one_file"><strong>open_one_file</strong></a>(self, path_file: str) -&gt; Union[cv2.Mat, numpy.ndarray]</dt><dd><span class="code">open&nbsp;one&nbsp;file&nbsp;at&nbsp;selected&nbsp;path.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path_file&nbsp;(str):&nbsp;path&nbsp;to&nbsp;file<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv2.typing.MatLike:&nbsp;image&nbsp;in&nbsp;openCV&nbsp;format</span></dd></dl>
+
+<dl><dt><a name="FileHandling-open_searched_files"><strong>open_searched_files</strong></a>(self, search_term: str = '') -&gt; Tuple[List]</dt><dd><span class="code">opens&nbsp;all&nbsp;files&nbsp;which&nbsp;contain&nbsp;search&nbsp;term&nbsp;(file&nbsp;name&nbsp;or&nbsp;type).&nbsp;<br>
+If&nbsp;no&nbsp;search&nbsp;term&nbsp;is&nbsp;given,&nbsp;it&nbsp;opens&nbsp;all&nbsp;files.&nbsp;<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;search_term&nbsp;(str,&nbsp;optional):&nbsp;search&nbsp;term&nbsp;for&nbsp;specific&nbsp;files&nbsp;or&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;file&nbsp;types.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defaults&nbsp;to&nbsp;"",&nbsp;opens&nbsp;all&nbsp;files.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Tuple[List]:&nbsp;Tuple&nbsp;with&nbsp;lists&nbsp;aof&nbsp;images&nbsp;and&nbsp;paths<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Tuple[0]&nbsp;cv2.typing.MatLike:&nbsp;&nbsp;images<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;Tuple[1]&nbsp;str:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;paths&nbsp;of&nbsp;images</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="ImageConverter">class <strong>ImageConverter</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">use&nbsp;pillow&nbsp;to&nbsp;open&nbsp;an&nbsp;image&nbsp;(more&nbsp;types&nbsp;are&nbsp;supported)&nbsp;and&nbsp;converts&nbsp;it&nbsp;to&nbsp;openCV&nbsp;image.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="ImageConverter-convert_image_opencv_to_pillow"><strong>convert_image_opencv_to_pillow</strong></a>(self, cv_image: Union[cv2.Mat, numpy.ndarray]) -&gt; PIL.Image.Image</dt><dd><span class="code">converts&nbsp;image&nbsp;from&nbsp;openCV&nbsp;into&nbsp;pillow&nbsp;format<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv_image&nbsp;(cv2.typing.MatLike):&nbsp;image&nbsp;in&nbsp;openCV&nbsp;format<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Image:&nbsp;image&nbsp;in&nbsp;pillow&nbsp;format</span></dd></dl>
+
+<dl><dt><a name="ImageConverter-convert_image_pillow_to_opencv"><strong>convert_image_pillow_to_opencv</strong></a>(self, pil_image: PIL.Image.Image) -&gt; Union[cv2.Mat, numpy.ndarray]</dt><dd><span class="code">converts&nbsp;image&nbsp;from&nbsp;pillow&nbsp;into&nbsp;openCV&nbsp;format<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pil_image&nbsp;(Image):&nbsp;image&nbsp;in&nbsp;pillow&nbsp;format<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv2.typing.MatLike:&nbsp;image&nbsp;in&nbsp;openCV&nbsp;format</span></dd></dl>
+
+<dl><dt><a name="ImageConverter-open_image_opencv"><strong>open_image_opencv</strong></a>(self, path_image: str) -&gt; Sequence[int]</dt><dd><span class="code">opens&nbsp;an&nbsp;image&nbsp;in&nbsp;openCV&nbsp;format&nbsp;with&nbsp;pillow<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path_image&nbsp;(str):&nbsp;path&nbsp;to&nbsp;image<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cv2.typing.MatShape:&nbsp;image&nbsp;in&nbsp;openCV&nbsp;format</span></dd></dl>
+
+<dl><dt><a name="ImageConverter-open_image_pillow"><strong>open_image_pillow</strong></a>(self, path_image: str) -&gt; PIL.Image.Image</dt><dd><span class="code">opens&nbsp;an&nbsp;image&nbsp;with&nbsp;pillow<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path_image&nbsp;(str):&nbsp;path&nbsp;to&nbsp;image<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Image:&nbsp;image&nbsp;in&nbsp;pillow&nbsp;format</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="IntegrityChecker">class <strong>IntegrityChecker</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code">Functions&nbsp;to&nbsp;check&nbsp;integrety&nbsp;of&nbsp;folder&nbsp;and&nbsp;files<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Static methods defined here:<br>
+<dl><dt><a name="IntegrityChecker-check_file_type"><strong>check_file_type</strong></a>(path: str) -&gt; bool</dt><dd><span class="code">checks,&nbsp;if&nbsp;file&nbsp;type&nbsp;is&nbsp;supported<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;(str):&nbsp;path&nbsp;of&nbsp;file<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True,&nbsp;if&nbsp;supported.&nbsp;False,&nbsp;otherwise.</span></dd></dl>
+
+<dl><dt><a name="IntegrityChecker-check_path_validity"><strong>check_path_validity</strong></a>(path: str, error_print: bool = True) -&gt; bool</dt><dd><span class="code">checks&nbsp;if&nbsp;path&nbsp;exists<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;(str):&nbsp;system&nbsp;path&nbsp;of&nbsp;directory,&nbsp;folder&nbsp;or&nbsp;file<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool:&nbsp;True,&nbsp;if&nbsp;exists,&nbsp;otherwise&nbsp;False</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table> <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="PathHandling">class <strong>PathHandling</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#PathHandling">PathHandling</a>(_path_abs_in:&nbsp;str&nbsp;=&nbsp;'')&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+Functions&nbsp;for&nbsp;path&nbsp;handling.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="PathHandling-__init__"><strong>__init__</strong></a>(self, _path_abs_in: str = '') -&gt; None</dt><dd><span class="code">Initialized&nbsp;path&nbsp;handling<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_path_abs_in&nbsp;(str,&nbsp;optional):&nbsp;Path&nbsp;for&nbsp;input&nbsp;folder.&nbsp;Defaults&nbsp;to&nbsp;"".</span></dd></dl>
+
+<dl><dt><a name="PathHandling-get_path_abs_input"><strong>get_path_abs_input</strong></a>(self) -&gt; str</dt><dd><span class="code">get&nbsp;input&nbsp;folder&nbsp;as&nbsp;absolute&nbsp;path<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;path&nbsp;of&nbsp;input&nbsp;folder</span></dd></dl>
+
+<dl><dt><a name="PathHandling-get_path_abs_output"><strong>get_path_abs_output</strong></a>(self) -&gt; str</dt><dd><span class="code">get&nbsp;output&nbsp;folder&nbsp;as&nbsp;absolute&nbsp;path<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;path&nbsp;of&nbsp;output&nbsp;folder</span></dd></dl>
+
+<dl><dt><a name="PathHandling-get_path_abs_parent"><strong>get_path_abs_parent</strong></a>(self) -&gt; str</dt><dd><span class="code">get&nbsp;parent&nbsp;folder&nbsp;as&nbsp;absolute&nbsp;path<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;path&nbsp;of&nbsp;parent&nbsp;folder</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>List</strong> = typing.List<br>
+<strong>Tuple</strong> = typing.Tuple<br>
+<strong>VALID_TYPES</strong> = ['.jpg', '.png']</td></tr></table>
+</body></html>

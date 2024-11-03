@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module controller</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+<td class="title">&nbsp;<br><strong class="title">controller</strong></td>
+<td class="extra"><a href=".">index</a><br><a href="file:c%3A%5Cfhgr%5Csoftwareengineeringproject%5Csrc%5Ccontroller.py">c:\fhgr\softwareengineeringproject\src\controller.py</a></td></tr></table>
+    <p><span class="code">Module&nbsp;for&nbsp;managing&nbsp;<a href="builtins.html#object">object</a>&nbsp;detection&nbsp;in&nbsp;camera&nbsp;and&nbsp;image&nbsp;streams.</span></p>
+<p>
+<table class="section">
+<tr class="decor pkg-content-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Modules</strong></td></tr>
+    
+<tr><td class="decor pkg-content-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><table><tr><td class="multicolumn"><a href="threading.html">threading</a><br>
+</td><td class="multicolumn"></td><td class="multicolumn"></td><td class="multicolumn"></td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor index-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Classes</strong></td></tr>
+    
+<tr><td class="decor index-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl>
+<dt class="heading-text"><a href="builtins.html#object">builtins.object</a>
+</dt><dd>
+<dl>
+<dt class="heading-text"><a href="controller.html#DetectionController">DetectionController</a>
+</dt></dl>
+</dd>
+</dl>
+ <p>
+<table class="section">
+<tr class="decor title-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><a name="DetectionController">class <strong>DetectionController</strong></a>(<a href="builtins.html#object">builtins.object</a>)</td></tr>
+    
+<tr><td class="decor title-decor" rowspan=2><span class="code">&nbsp;&nbsp;&nbsp;</span></td>
+<td class="decor title-decor" colspan=2><span class="code"><a href="#DetectionController">DetectionController</a>(mode:&nbsp;Any,&nbsp;image_path:&nbsp;Any,&nbsp;show_image_callback:&nbsp;Callable[[Any,&nbsp;str],&nbsp;NoneType],&nbsp;update_status_callback:&nbsp;Callable[[str],&nbsp;NoneType],&nbsp;log_file_path:&nbsp;str&nbsp;=&nbsp;'log.csv',&nbsp;source_type:&nbsp;str&nbsp;=&nbsp;'c')&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+Controls&nbsp;and&nbsp;manages&nbsp;<a href="builtins.html#object">object</a>&nbsp;detection&nbsp;processes&nbsp;for&nbsp;camera&nbsp;and&nbsp;image&nbsp;inputs.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;handles&nbsp;the&nbsp;initialization&nbsp;and&nbsp;management&nbsp;of&nbsp;detection&nbsp;processes,<br>
+including&nbsp;thread&nbsp;management&nbsp;and&nbsp;logging&nbsp;of&nbsp;detected&nbsp;objects,&nbsp;interacting&nbsp;with<br>
+streams&nbsp;only&nbsp;through&nbsp;DataSelector.<br>
+&nbsp;<br>
+Attributes:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode:&nbsp;Current&nbsp;detection&nbsp;mode&nbsp;selector&nbsp;(CAMERA/IMAGE).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_path:&nbsp;Path&nbsp;to&nbsp;image&nbsp;directory&nbsp;for&nbsp;IMAGE&nbsp;mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;show_image_callback:&nbsp;Callback&nbsp;function&nbsp;to&nbsp;display&nbsp;processed&nbsp;images.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;update_status_callback:&nbsp;Callback&nbsp;function&nbsp;to&nbsp;update&nbsp;status&nbsp;messages.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;running:&nbsp;Boolean&nbsp;indicating&nbsp;if&nbsp;detection&nbsp;is&nbsp;currently&nbsp;active.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;detection_thread:&nbsp;Thread&nbsp;<a href="builtins.html#object">object</a>&nbsp;for&nbsp;running&nbsp;detection&nbsp;process.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;stop_event:&nbsp;Threading&nbsp;event&nbsp;to&nbsp;signal&nbsp;detection&nbsp;stopping.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;logger:&nbsp;Logger&nbsp;instance&nbsp;for&nbsp;recording&nbsp;detection&nbsp;results.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data_selector:&nbsp;Selector&nbsp;for&nbsp;managing&nbsp;different&nbsp;input&nbsp;streams.<br>&nbsp;</span></td></tr>
+<tr><td>&nbsp;</td>
+<td class="singlecolumn">Methods defined here:<br>
+<dl><dt><a name="DetectionController-__init__"><strong>__init__</strong></a>(self, mode: Any, image_path: Any, show_image_callback: Callable[[Any, str], NoneType], update_status_callback: Callable[[str], NoneType], log_file_path: str = 'log.csv', source_type: str = 'c') -&gt; None</dt><dd><span class="code">Initialize&nbsp;the&nbsp;<a href="#DetectionController">DetectionController</a>.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode:&nbsp;Mode&nbsp;selector&nbsp;with&nbsp;get()&nbsp;method&nbsp;returning&nbsp;"CAMERA"&nbsp;or&nbsp;"IMAGE".<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image_path:&nbsp;Object&nbsp;with&nbsp;get()&nbsp;method&nbsp;returning&nbsp;folder&nbsp;path&nbsp;for&nbsp;IMAGE&nbsp;mode.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;show_image_callback:&nbsp;Function&nbsp;to&nbsp;display&nbsp;processed&nbsp;images.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;update_status_callback:&nbsp;Function&nbsp;to&nbsp;update&nbsp;status&nbsp;messages.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;log_file_path:&nbsp;Path&nbsp;to&nbsp;CSV&nbsp;log&nbsp;file.&nbsp;Defaults&nbsp;to&nbsp;'log.csv'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;source_type:&nbsp;Type&nbsp;of&nbsp;data&nbsp;source&nbsp;("c"&nbsp;for&nbsp;camera,&nbsp;"i"&nbsp;for&nbsp;images).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defaults&nbsp;to&nbsp;"c".</span></dd></dl>
+
+<dl><dt><a name="DetectionController-detect_from_stream"><strong>detect_from_stream</strong></a>(self, mode: str) -&gt; None</dt><dd><span class="code">Process&nbsp;images&nbsp;from&nbsp;the&nbsp;data&nbsp;stream&nbsp;and&nbsp;perform&nbsp;<a href="builtins.html#object">object</a>&nbsp;detection.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mode:&nbsp;Current&nbsp;detection&nbsp;mode&nbsp;("CAMERA"&nbsp;or&nbsp;"IMAGE").</span></dd></dl>
+
+<dl><dt><a name="DetectionController-get_image_names"><strong>get_image_names</strong></a>(self) -&gt; List[str]</dt><dd><span class="code">Get&nbsp;names&nbsp;of&nbsp;all&nbsp;available&nbsp;images&nbsp;in&nbsp;the&nbsp;current&nbsp;stream.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;List[str]:&nbsp;List&nbsp;of&nbsp;image&nbsp;names,&nbsp;empty&nbsp;list&nbsp;if&nbsp;not&nbsp;in&nbsp;IMAGE&nbsp;mode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;if&nbsp;no&nbsp;stream&nbsp;is&nbsp;available.</span></dd></dl>
+
+<dl><dt><a name="DetectionController-run_detection"><strong>run_detection</strong></a>(self) -&gt; None</dt><dd><span class="code">Execute&nbsp;the&nbsp;main&nbsp;detection&nbsp;loop&nbsp;based&nbsp;on&nbsp;current&nbsp;mode.</span></dd></dl>
+
+<dl><dt><a name="DetectionController-start_detection"><strong>start_detection</strong></a>(self) -&gt; None</dt><dd><span class="code">Start&nbsp;<a href="builtins.html#object">object</a>&nbsp;detection&nbsp;in&nbsp;a&nbsp;separate&nbsp;thread.</span></dd></dl>
+
+<dl><dt><a name="DetectionController-stop_detection"><strong>stop_detection</strong></a>(self) -&gt; None</dt><dd><span class="code">Stop&nbsp;the&nbsp;ongoing&nbsp;<a href="builtins.html#object">object</a>&nbsp;detection&nbsp;process.</span></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><span class="code">dictionary&nbsp;for&nbsp;instance&nbsp;variables</span></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><span class="code">list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object</span></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>Callable</strong> = typing.Callable<br>
+<strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional</td></tr></table>
+</body></html>
