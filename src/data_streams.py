@@ -11,6 +11,7 @@ class DataStream(ABC):
     """Abstract base class for different data streams."""
 
     def __init__(self) -> None:
+        """Initialized DataStream"""
         self.current_image = None
         self.image_tuple:Tuple[cv2.typing.matLike, str]=("","")
 
@@ -63,34 +64,67 @@ class DataStream(ABC):
 
 
 class CameraStream(DataStream):
+    """Stream of Camera"""
     def __init__(self) -> None:
+        """Initialized CameraStream"""
         super().__init__()
         self.cam_op = handling_cameras.CameraOperator()
 
+
     def open_data_stream(self) -> bool:
+        """setups and opens camera stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         if not self.cam_op.select_camera_device():
             return False
         if not self.cam_op.open_camera_stream():
             return False
         return self.update_data_stream()
 
+
     def update_data_stream(self) -> bool:
+        """updates camera stream i.e. the current image.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         self.current_image = self.cam_op.get_image_camera()
         return self.current_image is not None
 
+
     def close_data_stream(self) -> bool:
+        """closes camera stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         return self.cam_op.close_camera_stream()
 
 
 class FolderStream(DataStream):
+    """Stream of Folder/Image"""
+    
     def __init__(self, _folder_path:str="") -> None:
+        """Initialized FolderStream
+
+        Args:
+            _folder_path (str, optional): Path to folder. Defaults to "".
+        """
         super().__init__()
         self._id_image:int = 0
         
         self.ph = handling_paths_files.PathHandling(_folder_path)
         self.fh = handling_paths_files.FileHandling()
 
+
     def open_data_stream(self) -> bool:
+        """setups and opens folder stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         input_path = self.ph.get_path_abs_input()
         
         if not(IntegrityChecker.check_path_validity(input_path)):
@@ -103,7 +137,13 @@ class FolderStream(DataStream):
         self._id_image = 0
         return self.update_data_stream()
 
+
     def update_data_stream(self) -> bool:
+        """updates folder stream i.e. the current image.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         image_list = self.image_tuple[0]
         amount_images = len(image_list)
         
@@ -114,6 +154,11 @@ class FolderStream(DataStream):
         return False
 
     def close_data_stream(self) -> bool:
+        """closes folder stream.
+
+        Returns:
+            bool: True, if successful. False, otherwise.
+        """
         self.current_image = None
         self.image_tuple = ()
         self._id_image = 0

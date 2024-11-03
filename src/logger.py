@@ -12,7 +12,7 @@ class Logger:
     for each session.
     """
     
-    def __init__(self, base_file_path='log.csv'):
+    def __init__(self, base_file_path='log.csv')->None:
         """Initialize CSV writer with unique file path.
 
         Args:
@@ -28,11 +28,12 @@ class Logger:
         self.csv_writer = CSVWriter(self.file_path)
         self.current_image = None
 
+
     def _create_unique_filename(self, base_file_path: str) -> str:
         """Create unique filename with timestamp.
 
         Args:
-            base_file_path: Base path for the log file
+            base_file_path (str): Base path for the log file
 
         Returns:
             str: Path with timestamp included
@@ -41,8 +42,8 @@ class Logger:
         name, ext = os.path.splitext(filename)
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         new_filename = f"{name}_{timestamp}{ext}"
-        
         return os.path.join(directory, new_filename)
+
 
     def set_current_image(self, image_identifier: str) -> None:
         """Set the current image being processed.

@@ -8,7 +8,13 @@ from typing import List, Tuple
 VALID_TYPES = [".jpg", ".png"]
 
 class PathHandling():
+    """Functions for path handling."""
     def __init__(self, _path_abs_in: str="", ) -> None:
+        """Initialized path handling
+
+        Args:
+            _path_abs_in (str, optional): Path for input folder. Defaults to "".
+        """
         self.path_rel_in = "in"
         self.path_rel_out = "out"
         
@@ -16,7 +22,7 @@ class PathHandling():
         self.path_abs_in = ""
         self.path_abs_out = ""
 
-        if (len(_path_abs_in)>0) and IntegrityChecker.check_path_validity(_path_abs_in):
+        if (len(_path_abs_in)>0) and IntegrityChecker.check_path_validity(_path_abs_in, False):
             self.path_abs_in = _path_abs_in
 
         
@@ -70,10 +76,10 @@ class PathHandling():
     
     
 class FileHandling():
+    """Functions for handling files"""
     def __init__(self, _path_input:str=""):
         self.path_input = _path_input
         self._file_current = ""
-        
     
     
     def open_all_files(self) -> Tuple[List]:
@@ -123,18 +129,21 @@ class FileHandling():
         return (items, filenames)
     
     
-    def open_one_file(self, path_file:str):
+    def open_one_file(self, path_file:str)->cv2.typing.MatLike:
+        """open one file at selected path.
+
+        Args:
+            path_file (str): path to file
+
+        Returns:
+            cv2.typing.MatLike: image in openCV format
+        """
         try:
             ImageCv = ImageConverter().open_image_opencv(path_file)
         except Exception as e:
              print(f"ERROR: Cannot open image: \n{e}")
              return None
         return ImageCv
-    
-    
-    def remove_one_file(self, path_file: str): 
-        os.remove(path_file)
-        return
       
     
 
@@ -152,6 +161,7 @@ class ImageConverter:
         """
         return self.convert_image_pillow_to_opencv(self.open_image_pillow(path_image))
     
+    
     def open_image_pillow(self, path_image: str) -> Image:
         """opens an image with pillow
 
@@ -163,6 +173,7 @@ class ImageConverter:
         """ 
         return PilImg.open(path_image)
     
+    
     def convert_image_pillow_to_opencv(self, pil_image: Image) -> cv2.typing.MatLike:
         """converts image from pillow into openCV format
 
@@ -173,6 +184,7 @@ class ImageConverter:
             cv2.typing.MatLike: image in openCV format
         """
         return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+    
     
     def convert_image_opencv_to_pillow(self, cv_image:cv2.typing.MatLike) -> Image:
         """converts image from openCV into pillow format
@@ -187,6 +199,7 @@ class ImageConverter:
 
 
 class IntegrityChecker:
+    """Functions to check integrety of folder and files"""
     @staticmethod
     def check_path_validity(path:str, error_print:bool = True) -> bool:
         """checks if path exists

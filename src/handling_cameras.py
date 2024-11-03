@@ -3,6 +3,7 @@ import cv2
 from typing import List, Tuple
 
 class CameraSearch:
+    """Function to search system for all avaiable cameras."""
     @staticmethod
     def list_camera_devices()->List[int]:
         """checks system for avaiable and working device ports.
@@ -41,7 +42,13 @@ class CameraSearch:
 
 
 class CameraOperator:
+    """Functions to operate camera"""
     def __init__(self, _camera_device_port:int=0)->None:
+        """Initialize camera operator
+
+        Args:
+            _camera_device_port (int, optional): Device port of camera. Defaults to 0.
+        """
         self.camera_device_port = 0
         if _camera_device_port >= 0:
             self.camera_device_port = _camera_device_port
@@ -52,7 +59,7 @@ class CameraOperator:
     
     
     def select_camera_device(self)->bool:
-        """users can select from found camera devices. 
+        """Users can select from found camera devices. 
 
         Returns:
             bool: True, if successful. False, otherwise.
@@ -80,7 +87,6 @@ class CameraOperator:
             print("ERROR: No valid number!", msg_not_found_port)
             return False
         
-            
         if user_number_input in working_device_ports:
             print(f"Port {user_number_input} is selected")
             self.camera_device_port = user_number_input
@@ -94,7 +100,7 @@ class CameraOperator:
         """opens camera stream.
 
         Returns:
-            bool: _True, if successful. False, otherwise.
+            bool: True, if successful. False, otherwise.
         """
         temp_cap = self._capture
         self._capture = cv2.VideoCapture(self.camera_device_port)

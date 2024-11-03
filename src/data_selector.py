@@ -24,7 +24,7 @@ class DataSelector:
         self.select_stream(source_type)
 
     def select_stream(self, source_type:str = 'c', folder_path:str="") -> bool:
-        """_summary_
+        """Select data stream.
 
         Args:
             source_type (str, optional): The data source type. Defaults to 'c'.
@@ -55,7 +55,7 @@ class DataSelector:
         return False
 
     def get_stream(self) -> Optional[DataStream]:
-        """Get selected data stream
+        """Get selected data stream.
 
         Returns:
             DataStream: Data stream instance or None.

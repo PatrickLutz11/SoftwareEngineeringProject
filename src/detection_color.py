@@ -1,12 +1,16 @@
 import cv2
 import numpy as np
 from typing import List, Tuple
+from abc import ABC, abstractmethod
 
 from handling_configurations import ConfigReader,ConfigWriter
 
 BGR_COLORS = ConfigReader("config.json").get_value('BGR_COLORS', {})
 
+
 class ColorDetector:
+    """Functions to detect color of shape"""
+    @abstractmethod
     def get_color(self, img:cv2.typing.MatLike, shape:List) -> str:
         """Identifying the color of the found shapes
 
@@ -41,9 +45,12 @@ class ColorDetector:
         
     
 class ColorLimiter:
+    """functions to get limits for color detection"""
     def __init__(self):
+        """Initialize ColorLimiter"""
         self._range_spectrum = 15
-        
+    
+    
     def get_limits_hsv(self, color_bgr:List[int])->Tuple:
         color = np.array([[color_bgr]], dtype=np.uint8)
         hsv_color = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
@@ -54,6 +61,7 @@ class ColorLimiter:
         limit_array_2 = self._get_hsv_limits(hue_limits_upper)
         
         return limit_array_1, limit_array_2
+    
     
     def _get_hue_limits_lower(self, hue:int)->Tuple[np.uint8, np.uint8]:
         """get lower hue limits of color.

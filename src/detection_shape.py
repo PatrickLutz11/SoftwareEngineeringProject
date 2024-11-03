@@ -1,15 +1,18 @@
 import cv2
 import numpy as np
 from typing import List, Dict, Tuple
+from abc import abstractmethod
 
 
 from handling_configurations import ConfigReader
-
 from detection_color import ColorDetector
 
 BGR_COLORS = ConfigReader("config.json").get_value('BGR_COLORS')
 
+
 class Detection:
+    """Functions to detect shape and recognize it"""
+    @abstractmethod
     def shape_detection(img:cv2.typing.MatLike, ratio_image_to_shape:int=100) -> List:
         """Shape detection from the image
 
@@ -27,7 +30,6 @@ class Detection:
         minimum_area_for_shape = int(area_of_img/ratio_image_to_shape)
 
         blurred = cv2.GaussianBlur(gray_img, (5, 5), 0)
-        
         thresholded = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
         
         contours, _ = cv2.findContours(thresholded, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -50,7 +52,7 @@ class Detection:
         
         return filtered_shapes 
 
-            
+    @abstractmethod
     def shape_recognition(found_shapes:List, img:cv2.typing.MatLike) -> List[Dict[str, str]]:
         """Identification of found shapes
 
